@@ -1,0 +1,662 @@
+{
+    "Genesis": {
+        "short": "Gen",
+        "id": "0",
+        "total": "50",
+        "volume": "OT",
+        "spellings": [
+            "Gen",
+            "Genesis"
+        ]
+    },
+    "Exodus": {
+        "short": "Exod",
+        "id": "1",
+        "total": "40",
+        "volume": "OT",
+        "spellings": [
+            "Exod",
+            "Exodus"
+        ]
+    },
+    "Leviticus": {
+        "short": "Lev",
+        "id": "2",
+        "total": "27",
+        "volume": "OT",
+        "spellings": [
+            "Lev",
+            "Leviticus"
+        ]
+    },
+    "Numbers": {
+        "short": "Num",
+        "id": "3",
+        "total": "36",
+        "volume": "OT",
+        "spellings": [
+            "Num",
+            "Numbers"
+        ]
+    },
+    "Deuteronomy": {
+        "short": "Deut",
+        "id": "4",
+        "total": "34",
+        "volume": "OT",
+        "spellings": [
+            "Deut",
+            "Deuteronomy"
+        ]
+    },
+    "Joshua": {
+        "short": "Josh",
+        "id": "5",
+        "total": "24",
+        "volume": "OT",
+        "spellings": [
+            "Josh",
+            "Joshua"
+        ]
+    },
+    "Judges": {
+        "short": "Judg",
+        "id": "6",
+        "total": "21",
+        "volume": "OT",
+        "spellings": [
+            "Judg",
+            "Judges"
+        ]
+    },
+    "Ruth": {
+        "short": "Ruth",
+        "id": "7",
+        "total": "4",
+        "volume": "OT",
+        "spellings": [
+            "Ruth",
+            "Ruth"
+        ]
+    },
+    "1 Samuel": {
+        "short": "1Sam",
+        "id": "8",
+        "total": "31",
+        "volume": "OT",
+        "spellings": [
+            "1Sam",
+            "1 Samuel"
+        ]
+    },
+    "2 Samuel": {
+        "short": "2Sam",
+        "id": "9",
+        "total": "24",
+        "volume": "OT",
+        "spellings": [
+            "2Sam",
+            "2 Samuel"
+        ]
+    },
+    "1 Kings": {
+        "short": "1Kgs",
+        "id": "10",
+        "total": "22",
+        "volume": "OT",
+        "spellings": [
+            "1Kgs",
+            "1 Kings"
+        ]
+    },
+    "2 Kings": {
+        "short": "2Kgs",
+        "id": "11",
+        "total": "25",
+        "volume": "OT",
+        "spellings": [
+            "2Kgs",
+            "2 Kings"
+        ]
+    },
+    "1 Chronicles": {
+        "short": "1Chr",
+        "id": "12",
+        "total": "29",
+        "volume": "OT",
+        "spellings": [
+            "1Chr",
+            "1 Chronicles"
+        ]
+    },
+    "2 Chronicles": {
+        "short": "2Chr",
+        "id": "13",
+        "total": "36",
+        "volume": "OT",
+        "spellings": [
+            "2Chr",
+            "2 Chronicles"
+        ]
+    },
+    "Ezra": {
+        "short": "Ezra",
+        "id": "14",
+        "total": "10",
+        "volume": "OT",
+        "spellings": [
+            "Ezra",
+            "Ezra"
+        ]
+    },
+    "Nehemiah": {
+        "short": "Neh",
+        "id": "15",
+        "total": "13",
+        "volume": "OT",
+        "spellings": [
+            "Neh",
+            "Nehemiah"
+        ]
+    },
+    "Esther": {
+        "short": "Esth",
+        "id": "16",
+        "total": "10",
+        "volume": "OT",
+        "spellings": [
+            "Esth",
+            "Esther"
+        ]
+    },
+    "Job": {
+        "short": "Job",
+        "id": "17",
+        "total": "42",
+        "volume": "OT",
+        "spellings": [
+            "Job",
+            "Job"
+        ]
+    },
+    "Psalms": {
+        "short": "Ps",
+        "id": "18",
+        "total": "150",
+        "volume": "OT",
+        "spellings": [
+            "Ps",
+            "Psalms"
+        ]
+    },
+    "Proverbs": {
+        "short": "Prov",
+        "id": "19",
+        "total": "31",
+        "volume": "OT",
+        "spellings": [
+            "Prov",
+            "Proverbs"
+        ]
+    },
+    "Ecclesiastes": {
+        "short": "Eccl",
+        "id": "20",
+        "total": "12",
+        "volume": "OT",
+        "spellings": [
+            "Eccl",
+            "Ecclesiastes"
+        ]
+    },
+    "Song of Solomon": {
+        "short": "Song",
+        "id": "21",
+        "total": "8",
+        "volume": "OT",
+        "spellings": [
+            "Song",
+            "Song of Solomon"
+        ]
+    },
+    "Isaiah": {
+        "short": "Isa",
+        "id": "22",
+        "total": "66",
+        "volume": "OT",
+        "spellings": [
+            "Isa",
+            "Isaiah"
+        ]
+    },
+    "Jeremiah": {
+        "short": "Jer",
+        "id": "23",
+        "total": "52",
+        "volume": "OT",
+        "spellings": [
+            "Jer",
+            "Jeremiah"
+        ]
+    },
+    "Lamentations": {
+        "short": "Lam",
+        "id": "24",
+        "total": "5",
+        "volume": "OT",
+        "spellings": [
+            "Lam",
+            "Lamentations"
+        ]
+    },
+    "Ezekiel": {
+        "short": "Ezek",
+        "id": "25",
+        "total": "48",
+        "volume": "OT",
+        "spellings": [
+            "Ezek",
+            "Ezekiel"
+        ]
+    },
+    "Daniel": {
+        "short": "Dan",
+        "id": "26",
+        "total": "12",
+        "volume": "OT",
+        "spellings": [
+            "Dan",
+            "Daniel"
+        ]
+    },
+    "Hosea": {
+        "short": "Hos",
+        "id": "27",
+        "total": "14",
+        "volume": "OT",
+        "spellings": [
+            "Hos",
+            "Hosea"
+        ]
+    },
+    "Joel": {
+        "short": "Joel",
+        "id": "28",
+        "total": "3",
+        "volume": "OT",
+        "spellings": [
+            "Joel",
+            "Joel"
+        ]
+    },
+    "Amos": {
+        "short": "Amos",
+        "id": "29",
+        "total": "9",
+        "volume": "OT",
+        "spellings": [
+            "Amos",
+            "Amos"
+        ]
+    },
+    "Obadiah": {
+        "short": "Obad",
+        "id": "30",
+        "total": "1",
+        "volume": "OT",
+        "spellings": [
+            "Obad",
+            "Obadiah"
+        ]
+    },
+    "Jonah": {
+        "short": "Jonah",
+        "id": "31",
+        "total": "4",
+        "volume": "OT",
+        "spellings": [
+            "Jonah",
+            "Jonah"
+        ]
+    },
+    "Micah": {
+        "short": "Mic",
+        "id": "32",
+        "total": "7",
+        "volume": "OT",
+        "spellings": [
+            "Mic",
+            "Micah"
+        ]
+    },
+    "Nahum": {
+        "short": "Nah",
+        "id": "33",
+        "total": "3",
+        "volume": "OT",
+        "spellings": [
+            "Nah",
+            "Nahum"
+        ]
+    },
+    "Habakkuk": {
+        "short": "Hab",
+        "id": "34",
+        "total": "3",
+        "volume": "OT",
+        "spellings": [
+            "Hab",
+            "Habakkuk"
+        ]
+    },
+    "Zephaniah": {
+        "short": "Zeph",
+        "id": "35",
+        "total": "3",
+        "volume": "OT",
+        "spellings": [
+            "Zeph",
+            "Zephaniah"
+        ]
+    },
+    "Haggai": {
+        "short": "Hag",
+        "id": "36",
+        "total": "2",
+        "volume": "OT",
+        "spellings": [
+            "Hag",
+            "Haggai"
+        ]
+    },
+    "Zechariah": {
+        "short": "Zech",
+        "id": "37",
+        "total": "14",
+        "volume": "OT",
+        "spellings": [
+            "Zech",
+            "Zechariah"
+        ]
+    },
+    "Malachi": {
+        "short": "Mal",
+        "id": "38",
+        "total": "4",
+        "volume": "OT",
+        "spellings": [
+            "Mal",
+            "Malachi"
+        ]
+    },
+    "Matthew": {
+        "short": "Matt",
+        "id": "39",
+        "total": "28",
+        "volume": "NT",
+        "spellings": [
+            "Matt",
+            "Matthew"
+        ]
+    },
+    "Mark": {
+        "short": "Mark",
+        "id": "40",
+        "total": "16",
+        "volume": "NT",
+        "spellings": [
+            "Mark",
+            "Mark"
+        ]
+    },
+    "Luke": {
+        "short": "Luke",
+        "id": "41",
+        "total": "24",
+        "volume": "NT",
+        "spellings": [
+            "Luke",
+            "Luke"
+        ]
+    },
+    "John": {
+        "short": "John",
+        "id": "42",
+        "total": "21",
+        "volume": "NT",
+        "spellings": [
+            "John",
+            "John"
+        ]
+    },
+    "Acts": {
+        "short": "Acts",
+        "id": "43",
+        "total": "28",
+        "volume": "NT",
+        "spellings": [
+            "Acts",
+            "Acts"
+        ]
+    },
+    "Romans": {
+        "short": "Rom",
+        "id": "44",
+        "total": "16",
+        "volume": "NT",
+        "spellings": [
+            "Rom",
+            "Romans"
+        ]
+    },
+    "1 Corinthians": {
+        "short": "1Cor",
+        "id": "45",
+        "total": "16",
+        "volume": "NT",
+        "spellings": [
+            "1Cor",
+            "1 Corinthians"
+        ]
+    },
+    "2 Corinthians": {
+        "short": "2Cor",
+        "id": "46",
+        "total": "13",
+        "volume": "NT",
+        "spellings": [
+            "2Cor",
+            "2 Corinthians"
+        ]
+    },
+    "Galatians": {
+        "short": "Gal",
+        "id": "47",
+        "total": "6",
+        "volume": "NT",
+        "spellings": [
+            "Gal",
+            "Galatians"
+        ]
+    },
+    "Ephesians": {
+        "short": "Eph",
+        "id": "48",
+        "total": "6",
+        "volume": "NT",
+        "spellings": [
+            "Eph",
+            "Ephesians"
+        ]
+    },
+    "Philippians": {
+        "short": "Phil",
+        "id": "49",
+        "total": "4",
+        "volume": "NT",
+        "spellings": [
+            "Phil",
+            "Philippians"
+        ]
+    },
+    "Colossians": {
+        "short": "Col",
+        "id": "50",
+        "total": "4",
+        "volume": "NT",
+        "spellings": [
+            "Col",
+            "Colossians"
+        ]
+    },
+    "1 Thessalonians": {
+        "short": "1Thess",
+        "id": "51",
+        "total": "5",
+        "volume": "NT",
+        "spellings": [
+            "1Thess",
+            "1 Thessalonians"
+        ]
+    },
+    "2 Thessalonians": {
+        "short": "2Thess",
+        "id": "52",
+        "total": "3",
+        "volume": "NT",
+        "spellings": [
+            "2Thess",
+            "2 Thessalonians"
+        ]
+    },
+    "1 Timothy": {
+        "short": "1Tim",
+        "id": "53",
+        "total": "6",
+        "volume": "NT",
+        "spellings": [
+            "1Tim",
+            "1 Timothy"
+        ]
+    },
+    "2 Timothy": {
+        "short": "2Tim",
+        "id": "54",
+        "total": "4",
+        "volume": "NT",
+        "spellings": [
+            "2Tim",
+            "2 Timothy"
+        ]
+    },
+    "Titus": {
+        "short": "Titus",
+        "id": "55",
+        "total": "3",
+        "volume": "NT",
+        "spellings": [
+            "Titus",
+            "Titus"
+        ]
+    },
+    "Philemon": {
+        "short": "Phlm",
+        "id": "56",
+        "total": "1",
+        "volume": "NT",
+        "spellings": [
+            "Phlm",
+            "Philemon"
+        ]
+    },
+    "Hebrews": {
+        "short": "Heb",
+        "id": "57",
+        "total": "13",
+        "volume": "NT",
+        "spellings": [
+            "Heb",
+            "Hebrews"
+        ]
+    },
+    "James": {
+        "short": "Jas",
+        "id": "58",
+        "total": "5",
+        "volume": "NT",
+        "spellings": [
+            "Jas",
+            "James"
+        ]
+    },
+    "1 Peter": {
+        "short": "1Pet",
+        "id": "59",
+        "total": "5",
+        "volume": "NT",
+        "spellings": [
+            "1Pet",
+            "1 Peter"
+        ]
+    },
+    "2 Peter": {
+        "short": "2Pet",
+        "id": "60",
+        "total": "3",
+        "volume": "NT",
+        "spellings": [
+            "2Pet",
+            "2 Peter"
+        ]
+    },
+    "1 John": {
+        "short": "1John",
+        "id": "61",
+        "total": "5",
+        "volume": "NT",
+        "spellings": [
+            "1John",
+            "1 John"
+        ]
+    },
+    "2 John": {
+        "short": "2John",
+        "id": "62",
+        "total": "1",
+        "volume": "NT",
+        "spellings": [
+            "2John",
+            "2 John"
+        ]
+    },
+    "3 John": {
+        "short": "3John",
+        "id": "63",
+        "total": "1",
+        "volume": "NT",
+        "spellings": [
+            "3John",
+            "3 John"
+        ]
+    },
+    "Jude": {
+        "short": "Jude",
+        "id": "64",
+        "total": "1",
+        "volume": "NT",
+        "spellings": [
+            "Jude",
+            "Jude"
+        ]
+    },
+    "Revelation": {
+        "short": "Rev",
+        "id": "65",
+        "total": "22",
+        "volume": "NT",
+        "spellings": [
+            "Rev",
+            "Revelation"
+        ]
+    }
+}
