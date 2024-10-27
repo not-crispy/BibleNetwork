@@ -13,7 +13,14 @@ class BibleNetwork:
         self._init_verses()
         self._init_crossrefs()
         self.active = self.get_random_node() # set random verse as active node
-                
+        #self.active = self.get_node(0)
+        self.active = self.get_node(27169)
+        # self.active = self.get_node(22151)
+        # self.active = self.get_node(8351)f
+        # self.active = self.get_node(24230)
+        self.active = self.get_node(2487)
+        print(f"Your verse is:\n{self.active}")
+        
     def get_active(self):
         return self.active
     
@@ -21,93 +28,10 @@ class BibleNetwork:
         """Get id of active verse (e.g. 14500)"""
         return self.active["id"]
     
-    def get_id_by_name(self, verse):
-        """Lookup the id of a verse based on a given reference e.g. Matt.3.3"""
-        # Initialise verse lookup 
-        path = "verse_lookup.json"
-        with open(path, 'r') as config_file:
-            lookup = json.load(config_file)
-
-        # Conduct lookup and return ID
-        return lookup[verse] if verse in lookup else ""
-    
     def get_random_id(self):
         """Get id of an random verse"""
         return self.get_random_node()['id']
     
-    def get_edges(self, path):
-        """Get a list of edges for a given path"""
-        edges = []
-        count = 1
-        while count < len(path):
-            x = path[count - 1]
-            y = path[count]
-            edges.append(self.bible.edges[x,y])
-            count += 1 
-
-        return edges 
-
-    def get_path_passages(self, path):
-        """Get the passages of the given path."""
-        edges = self.get_edges(path)
-        edges.insert(0, {'end': ''}) # initialise with starting verse
-        passages = []
-        
-        for i, edge in enumerate(edges):
-            # Get start and end ids
-            start = path[i]
-            end = start if edge['end'] == '' else self.get_id_by_name(edge['end']) 
-
-            # Get passage           
-            passage = self.get_passage(start, end)
-            data = {'passage': passage['passage'], 'name': passage['name'], 'start': start, 'end': end}
-            passages.append(data)
-
-        return passages
-    
-    def get_passage_name(self, start, end):
-        """Construct the name of the passage given a start and end id."""
-        if start == end : # If not a passage
-            return self.get_fullname(start)
-        
-        # If a passage, get data
-        taxonomies = ['book', 'chap', 'verse']
-        name = f"{self.get_fullname(start)}-"
-        start = self.get_node(start)
-        end = self.get_node(end)
-        diff = False
-
-        # Build the name
-        for taxonomy in taxonomies:
-            if start[taxonomy] != end[taxonomy]:
-                diff = True               
-            if diff:
-                name += end[taxonomy]
-                name += " " if taxonomy == "book" else ""
-                name += ":" if taxonomy == "chap" else "" 
-
-        return name
-
-    def get_passage(self, x, y, active=''):
-        """Get a passage from the id x to the id y."""
-        # Initialise
-        active = active if active != '' else x
-        start, end = (y, x) if x > y else (x, y) # ensure start id is always smaller
-        verses = []
-        ids = []
-        verses_as_string = ""
-        name = self.get_passage_name(start, end)
-
-        # Iterate through start to end
-        while start <= end :
-            verse = self.get_verse(start)
-            verses.append(verse)
-            ids.append(start)
-            verses_as_string += f" {verse}"
-            start += 1
-
-        return {"name": name, "passage": verses_as_string.strip(" "), "verses": verses, "ids": ids, "active": active}
-
     def get_name(self, id=""):
         """Get name of given verse by id, or active verse if no id is supplied."""
         return self.active["name"] if id == "" else self.get_node(id)["name"]
@@ -235,76 +159,63 @@ class BibleNetwork:
 
         return serendipity  
     
-    def get_best_subgraph(self, id):
-        return self._optimise_subgraph(id)
-    
     def get_related_subgraph_force_crossrefs(self, factor=1, id="", how_many=-1):
-        """Get subgraph containing the given crossreferences"""
         crossrefs = self.get_crossrefs_ids(id=id, how_many=how_many, preprocess=True)
         crossrefs.add(id)
-        return self.get_related_subgraph(id=crossrefs, active=id, factor=factor)
+        return self.get_related_subgraph(id=crossrefs, factor=factor)
     
-    def get_related_subgraph(self, id="", active="", factor=0.4):
-        """Get subgraph of verses that are closely "related" to one another. Returns a subgraph G.
-        
-        factor -- A larger factor means a bigger subgraph."""
-
-        # Initialise
-        id = self.get_id() if id == "" else id
-        active = id if active == "" else active
-        id = id if type(id) is set else {id} # must be in form {1} or {1,45,33231}
-        nodes = self._get_cluster(factor, id)[0]
-        count = 0
-
-         # Be more sensitive
-        while len(nodes) < 15 and count < 3:
-            factor = factor + 0.1
-            nodes = self._get_cluster(factor, id)[0]
-            count += 1
-
-        # Be less sensitive
-        while len(nodes) > 25:
-            factor = factor - 0.05
-            nodes = self._get_cluster(factor, id)[0]
-
-        # Get subgraph
-        cluster = self._get_cluster(factor, id)
-        return self._convert_cluster_to_subgraph(cluster, active)
+    def get_best_related_subgraph(self, id):
+        return self._get_optimal_subgraph(id)
     
-    def _convert_cluster_to_subgraph(self, cluster, active, get_attribs=True):
-        """Convert cluster into subgraph. If attribs = True, add extra attributes to each node."""
-        nodes, lengths, paths = cluster
-        subgraph = self.bible.subgraph(nodes)
-
-        for key, path in paths.items():
-            if path[0] is not active:
-                path.insert(0, active)
-            paths[key] = path 
-
-        if get_attribs:
-            pos = nx.spring_layout(subgraph)
-            nx.set_node_attributes(subgraph, pos, 'position') # default position
-            nx.set_node_attributes(subgraph, paths, 'path') # path between initial node and this node
-            nx.set_node_attributes(subgraph, lengths, 'length') # length of path between initial node and this node
-
-        return subgraph
-    
-    def _optimise_subgraph(self, id):
-        """Select the subgraph with the most optimal serendipity (approximated using centrality measures)."""
+    def _get_optimal_subgraph(self, id):
         pairs = [(0.35, 5), (0.55, 4), (0.65, 2), (0.85, 0)]
         centrality = {}
         graphs = {}
 
-        # Try a few subgraphs
         for f, k in pairs:
-            G = self.get_related_subgraph_force_crossrefs(factor=f, id=id, how_many=k)
+            ids = self.get_crossrefs_ids(id=id, how_many=k, preprocess=True)
+            ids.add(id)
+            G = self.get_related_subgraph(f, ids)
             centrality[(f, k)] = self.get_centrality_measures(G)
             graphs[(f, k)] = G
 
-        # A lower degree approximates a lower serendipity (i.e. more optimal)
         top_graph = sorted(centrality.items(), key=lambda x: x[1]['degree'])[0][0]
         print(f"selecting... factor: {top_graph[0]} cutoff: {top_graph[1]}")     
         return graphs[top_graph]
+
+    
+    def get_related_subgraph(self, factor=1, id=""):
+        """Get subgraph of verses that are closely "related" to one another. Returns a subgraph G.
+        
+        factor -- A larger factor means a bigger subgraph."""
+
+        # Ensure an id in the form {1} or {1,45,33231} is being passed
+        id = self.get_id() if id == "" else id
+        id = id if type(id) is set else {id}
+        count = 0
+
+        nodes = self._get_cluster(factor, id)[0]
+
+        while len(nodes) < 15 and count < 3: # if few nodes in subgraph, try again but be more sensitive
+            # print("increasing factor ... +0.1") 
+            factor = factor + 0.1
+            nodes = self._get_cluster(factor, id)[0]
+            count += 1
+
+        while len(nodes) > 25: # if many nodes in subgraph, try again but be less sensitive
+            # print("decreasing factor ... -0.05") 
+            factor = factor - 0.05
+            nodes = self._get_cluster(factor, id)[0]
+
+        # create subgraph from cluster
+        nodes, lengths, paths = self._get_cluster(factor, id)
+        subgraph = self.bible.subgraph(nodes)
+        pos = nx.spring_layout(subgraph)
+        nx.set_node_attributes(subgraph, pos, 'position') # default position
+        nx.set_node_attributes(subgraph, paths, 'path') # path between initial node and this node
+        # nx.set_node_attributes(subgraph, lengths, 'path-length') # length of path between initial node and this node
+
+        return subgraph
 
     def previous_verse(self):
         prev_verse = self.get_id() - 1
@@ -493,13 +404,10 @@ if __name__ == "__main__":
 
     # low 
     node = 24332
-    print(f"Your current verse is:\n{network.get_node(node)}")
-    print(network.get_crossrefs_ids(node, 5, True))
-    print(network.get_best_subgraph(node))
-    path = network.get_shortest_path(1, 10000)[1]
-    print(network.get_path_passages(path))
-
-
+    print(network.get_crossrefs(1250))
+    print(network.get_crossrefs_ids(1250, 5, True))
+    print(network.get_name(node))
+    print(network.optimise_cluster(22151))
     # results = network.k_test(1500)
     # write_json(results, dump_path)
     # network.test_attributes(node)

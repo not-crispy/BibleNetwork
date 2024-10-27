@@ -183,12 +183,6 @@ class DashController():
         verse = self.get_p(self.network.get_verse(id))
         return self.get_div([name, verse])
     
-    def get_passage(self, data):
-        """Returns passage as a div."""
-        name = self.get_em(data['name'])
-        verse = self.get_p(data['passage'])
-        return self.get_div([name, verse])
-    
     def get_themes(self, id):
         """Returns themes as a list of tabs."""
         tabs = []
@@ -224,7 +218,7 @@ class DashController():
         
         return inputs
     
-    def get_search(self):
+    def get_inputs(self):
         msg = "type a verse... eg. Matthew 4:3"
         inputs = html.Div([  
             dcc.Input(id=f"search", type='text', placeholder=f"{msg}")
@@ -251,11 +245,10 @@ class DashController():
         children = []
         count = 1
         max = 1
-        path = nodeData['path']
-        
-        # get passage and create it
-        for passage in reversed(self.network.get_path_passages(path)):
-            children.append(self.get_passage(passage))
+
+        # get verse and create it
+        for id in reversed(nodeData['path']):
+            children.append(self.get_verse(id))
             
             # max reached ?
             count = count + 1 if count < max else -1 
@@ -311,11 +304,14 @@ class DashController():
     def get_prev_next(self, id):
         return {id - 1, id, id + 1}
         
-    def generate_fig(self, id, styles=""):     
+    def generate_fig(self, id, factor, cutoff, styles=""):     
         # build nodes and edges
         active_id = id
+        # id = self.get_prev_next(id)
         
-        G = self.network.get_best_subgraph(id=id)
+        # G = self.network.get_related_subgraph(factor=factor, id=id)
+        G = self.network.get_related_subgraph_force_crossrefs(factor=factor, id=id, how_many=cutoff)
+        G = self.network.get_best_related_subgraph(id=id)
         nodes = self.generate_nodes(G, active_id)
         edges = self.generate_edges(G)
         styles = self.default_stylesheet if styles == "" else styles
@@ -375,17 +371,28 @@ class DashController():
 
     def get_id_by_search(self, search, current_id=""):
         id = self.decode_search(search)
-        id = self.network.get_id_by_name(id) if id != "" else "" # only do if a reference is given
+        id = self.lookup_id(id) if id != "" else "" # only do if a reference is given
         id = current_id if id == "" else id
         return id
     
+    def lookup_id(self, verse):
+        """Lookup the id of a verse based on a given reference e.g. Matt.3.3"""
+        # Initialise verse lookup 
+        print(f"looking up! {verse}")
+        path = "verse_lookup.json"
+        with open(path, 'r') as config_file:
+            lookup = json.load(config_file)
+
+        # Conduct lookup and return ID
+        id = lookup[verse] if verse in lookup else ""
+        return id
+
     def generate_graph(self, id):
         return [self.generate_fig(id=id), dcc.Tooltip(id="graph-tooltip")]
     
-    # Troubleshoot
-    # def generate_graph(self, id, cutoff, factor):
-    #     print(cutoff, factor)
-    #     return [self.generate_fig(id=id, cutoff=cutoff, factor=factor), dcc.Tooltip(id="graph-tooltip")]
+    def generate_graph(self, id, cutoff, factor):
+        print(cutoff, factor)
+        return [self.generate_fig(id=id, cutoff=cutoff, factor=factor), dcc.Tooltip(id="graph-tooltip")]
 
 
 if __name__ == '__main__':

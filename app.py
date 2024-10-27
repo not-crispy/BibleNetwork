@@ -21,15 +21,17 @@ STYLESHEET = dc.StyleSheet()
 BUILDER = dc.DashController(NETWORK, STYLESHEET)
 cyto.load_extra_layouts()
 
-def get_inputs():
+def get_inputs(troubleshoot=False):
     BUILDER = dc.DashController(NETWORK, STYLESHEET)
-    return BUILDER.get_inputs()
+    search = BUILDER.get_search()
+    troubleshoots = BUILDER.get_troubleshoots
+    return [search, troubleshoots] if troubleshoot else [search]
 
 app.layout = [
     dcc.Store(id='id-store', data=''),
     html.Div(className='px-1 pt-2 my-2 text-center border-bottom', children=[
         html.H4(className="fw-bold text-body-emphasis", children='Bible Network'),
-        html.Div(id='inputs', children=[BUILDER.get_inputs(), BUILDER.get_troubleshoots()]),
+        html.Div(id='inputs', children=get_inputs()),
         html.Div(className='col-10 col-sm-8 col-lg-6 mx-auto', children=[
                     html.Div(className='d-grid gap-2 d-sm-flex justify-content-sm-center mb-5', style={'color': 'light-blue'}, children=[
                         html.Button(type='button', value='previous', id='previous', className='btn btn-primary px-4 me-sm-3', children='Previous'),
@@ -71,36 +73,37 @@ app.layout = [
     Input('search', 'value'),
     Input('id-store', 'data'),
     # Troubleshoots
-    Input('factor-troubleshoot', 'value'),
-    Input('crossrefs-troubleshoot', 'value'),
+    # Input('factor-troubleshoot', 'value'),
+    # Input('crossrefs-troubleshoot', 'value'),
 )
-def update_verse(prev, next, search, id, factor, cutoff):
+def update_verse(prev, next, search, id): # ,factor, cutoff):
     # initialise
     trigger = ctx.triggered_id
     id = NETWORK.get_random_id() if id == '' else id
-    # id = 22151 if id == '' else id
-    factor = 0.35 if factor is None else factor
-    cutoff = 5 if cutoff is None else cutoff
     current_id = id
 
+     # Troubleshoots
+    # factor = 0.35 if factor is None else factor
+    # cutoff = 5 if cutoff is None else cutoff
+    # id = 22151 if id == '' else id
+
     print(f"updating verse...{NETWORK.get_fullname(id)} {prev} {next}")
+    
     # did previous or next trigger?
     if prev is None and next is None:
         pass
     elif trigger == 'previous' or trigger == 'next' :
         id = id - 1 if trigger == 'previous' else id + 1
-        # print(NETWORK.get_related_topics(k=30))
 
     if trigger == 'search':
         print(f"searching for... {search}")
         id = BUILDER.get_id_by_search(search, id)
-        print(id)
 
     # update verse and its associates
     verse = BUILDER.get_verse(id)
     crossrefs = BUILDER.get_crossrefs(id)
-    graph = BUILDER.generate_graph(id, cutoff, factor)
-    # graph = BUILDER.generate_graph(id, cutoff=crossrefs, factor=factor)
+    graph = BUILDER.generate_graph(id)
+    # graph = BUILDER.generate_graph(id, cutoff, factor) # Troubleshooter
     themes = BUILDER.get_themes(id)
 
     return verse, crossrefs, graph, themes, id
