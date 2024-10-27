@@ -208,6 +208,16 @@ class DashController():
 
         return dropdown
     
+    def get_troubleshoots(self):
+        inputs = html.Div([
+            html.Span(["cross-refs:"]),
+            dcc.Input(id=f"crossrefs-troubleshoot", type='number', placeholder=5),
+            html.Span(["factor:"]),  
+            dcc.Input(id=f"factor-troubleshoot", type='number', placeholder=0.35),
+            ])
+        
+        return inputs
+    
     def get_inputs(self):
         msg = "type a verse... eg. Matthew 4:3"
         inputs = html.Div([  
@@ -294,11 +304,14 @@ class DashController():
     def get_prev_next(self, id):
         return {id - 1, id, id + 1}
         
-    def generate_fig(self, id, styles=""):     
+    def generate_fig(self, id, factor, cutoff, styles=""):     
         # build nodes and edges
         active_id = id
         # id = self.get_prev_next(id)
-        G = self.network.get_related_subgraph(1, id)
+        
+        # G = self.network.get_related_subgraph(factor=factor, id=id)
+        G = self.network.get_related_subgraph_force_crossrefs(factor=factor, id=id, how_many=cutoff)
+        G = self.network.get_best_related_subgraph(id=id)
         nodes = self.generate_nodes(G, active_id)
         edges = self.generate_edges(G)
         styles = self.default_stylesheet if styles == "" else styles
@@ -306,7 +319,8 @@ class DashController():
         # build figure
         fig = cyto.Cytoscape(
             id='network',
-            layout={'name': 'cose-bilkent',
+            layout={
+                    'name': 'cose-bilkent',
                     'animate': True,
                     # 'zoom': 10,
                     # 'fit': False,
@@ -327,14 +341,23 @@ class DashController():
         search = re.sub(r'[ ]+', ' ', search) # remove double spaces
         search = search.replace(':', '.').replace(' ', '.')
         search = search.split('.', 3)
+        print(search)
 
         if len(search) < 3 :
             return ""
         
-        bk, ch, vs = search[:3]
-        bk = bk.capitalize()
+        if search[0] in ['1', '2', '3'] :
+            num, bk, ch, vs = search[:4]
+            bk = bk.capitalize()
+            bk = f"{num} {bk}"
+        else :
+            bk, ch, vs = search[:3]
+            bk = bk.capitalize()
+
         taxonomy = self.get_taxonomy()
         bk = self.get_book_by_search(bk, taxonomy)
+        print(bk, ch, vs)
+
         
         if bk == "": 
             return ""
@@ -355,7 +378,7 @@ class DashController():
     def lookup_id(self, verse):
         """Lookup the id of a verse based on a given reference e.g. Matt.3.3"""
         # Initialise verse lookup 
-        print("looking up!")
+        print(f"looking up! {verse}")
         path = "verse_lookup.json"
         with open(path, 'r') as config_file:
             lookup = json.load(config_file)
@@ -366,6 +389,11 @@ class DashController():
 
     def generate_graph(self, id):
         return [self.generate_fig(id=id), dcc.Tooltip(id="graph-tooltip")]
+    
+    def generate_graph(self, id, cutoff, factor):
+        print(cutoff, factor)
+        return [self.generate_fig(id=id, cutoff=cutoff, factor=factor), dcc.Tooltip(id="graph-tooltip")]
+
 
 if __name__ == '__main__':
     network = bn.BibleNetwork()
