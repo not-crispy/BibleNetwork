@@ -1,0 +1,1016 @@
+[
+    [
+        [
+            0.25,
+            5
+        ],
+        {
+            "degree": 0.4366,
+            "closeness": 0.2679,
+            "betweens": 0.0705,
+            "avg_nodes": 14.1985,
+            "total_graphs": 1189
+        }
+    ],
+    [
+        [
+            0.35,
+            4
+        ],
+        {
+            "degree": 0.4588,
+            "closeness": 0.2694,
+            "betweens": 0.0754,
+            "avg_nodes": 14.6259,
+            "total_graphs": 965
+        }
+    ],
+    [
+        [
+            0.15,
+            5
+        ],
+        {
+            "degree": 0.4593,
+            "closeness": 0.2858,
+            "betweens": 0.0701,
+            "avg_nodes": 12.5043,
+            "total_graphs": 1380
+        }
+    ],
+    [
+        [
+            0.25,
+            4
+        ],
+        {
+            "degree": 0.4598,
+            "closeness": 0.2807,
+            "betweens": 0.0747,
+            "avg_nodes": 12.966,
+            "total_graphs": 1264
+        }
+    ],
+    [
+        [
+            0.35,
+            5
+        ],
+        {
+            "degree": 0.4684,
+            "closeness": 0.266,
+            "betweens": 0.0731,
+            "avg_nodes": 14.7763,
+            "total_graphs": 809
+        }
+    ],
+    [
+        [
+            0.45,
+            4
+        ],
+        {
+            "degree": 0.4794,
+            "closeness": 0.2733,
+            "betweens": 0.0757,
+            "avg_nodes": 14.6314,
+            "total_graphs": 814
+        }
+    ],
+    [
+        [
+            0.35,
+            3
+        ],
+        {
+            "degree": 0.4908,
+            "closeness": 0.2897,
+            "betweens": 0.0823,
+            "avg_nodes": 13.1499,
+            "total_graphs": 1094
+        }
+    ],
+    [
+        [
+            0.15,
+            4
+        ],
+        {
+            "degree": 0.4947,
+            "closeness": 0.303,
+            "betweens": 0.0752,
+            "avg_nodes": 11.1194,
+            "total_graphs": 1407
+        }
+    ],
+    [
+        [
+            0.45,
+            3
+        ],
+        {
+            "degree": 0.4961,
+            "closeness": 0.289,
+            "betweens": 0.0816,
+            "avg_nodes": 13.6352,
+            "total_graphs": 976
+        }
+    ],
+    [
+        [
+            0.45,
+            5
+        ],
+        {
+            "degree": 0.5096,
+            "closeness": 0.2749,
+            "betweens": 0.0744,
+            "avg_nodes": 14.1062,
+            "total_graphs": 650
+        }
+    ],
+    [
+        [
+            0.25,
+            3
+        ],
+        {
+            "degree": 0.5119,
+            "closeness": 0.3067,
+            "betweens": 0.0829,
+            "avg_nodes": 11.244,
+            "total_graphs": 1324
+        }
+    ],
+    [
+        [
+            0.55,
+            3
+        ],
+        {
+            "degree": 0.5247,
+            "closeness": 0.2929,
+            "betweens": 0.0793,
+            "avg_nodes": 13.8623,
+            "total_graphs": 741
+        }
+    ],
+    [
+        [
+            0.65,
+            3
+        ],
+        {
+            "degree": 0.5438,
+            "closeness": 0.295,
+            "betweens": 0.0791,
+            "avg_nodes": 13.6921,
+            "total_graphs": 630
+        }
+    ],
+    [
+        [
+            0.55,
+            4
+        ],
+        {
+            "degree": 0.5493,
+            "closeness": 0.2867,
+            "betweens": 0.0756,
+            "avg_nodes": 13.5289,
+            "total_graphs": 554
+        }
+    ],
+    [
+        [
+            0.15,
+            3
+        ],
+        {
+            "degree": 0.5566,
+            "closeness": 0.3322,
+            "betweens": 0.0846,
+            "avg_nodes": 9.5185,
+            "total_graphs": 1433
+        }
+    ],
+    [
+        [
+            0.65,
+            2
+        ],
+        {
+            "degree": 0.5742,
+            "closeness": 0.3258,
+            "betweens": 0.084,
+            "avg_nodes": 12.9883,
+            "total_graphs": 856
+        }
+    ],
+    [
+        [
+            0.55,
+            2
+        ],
+        {
+            "degree": 0.5749,
+            "closeness": 0.3287,
+            "betweens": 0.0856,
+            "avg_nodes": 12.7293,
+            "total_graphs": 964
+        }
+    ],
+    [
+        [
+            0.45,
+            2
+        ],
+        {
+            "degree": 0.5791,
+            "closeness": 0.3339,
+            "betweens": 0.0899,
+            "avg_nodes": 11.7207,
+            "total_graphs": 1142
+        }
+    ],
+    [
+        [
+            0.65,
+            4
+        ],
+        {
+            "degree": 0.5837,
+            "closeness": 0.29,
+            "betweens": 0.0744,
+            "avg_nodes": 13.0107,
+            "total_graphs": 466
+        }
+    ],
+    [
+        [
+            0.35,
+            2
+        ],
+        {
+            "degree": 0.5854,
+            "closeness": 0.3385,
+            "betweens": 0.0909,
+            "avg_nodes": 11.0237,
+            "total_graphs": 1224
+        }
+    ],
+    [
+        [
+            0.55,
+            5
+        ],
+        {
+            "degree": 0.5982,
+            "closeness": 0.2889,
+            "betweens": 0.0732,
+            "avg_nodes": 12.409,
+            "total_graphs": 445
+        }
+    ],
+    [
+        [
+            0.75,
+            3
+        ],
+        {
+            "degree": 0.6114,
+            "closeness": 0.2996,
+            "betweens": 0.0745,
+            "avg_nodes": 12.5917,
+            "total_graphs": 436
+        }
+    ],
+    [
+        [
+            0.75,
+            2
+        ],
+        {
+            "degree": 0.6142,
+            "closeness": 0.3297,
+            "betweens": 0.0821,
+            "avg_nodes": 12.55,
+            "total_graphs": 620
+        }
+    ],
+    [
+        [
+            0.25,
+            2
+        ],
+        {
+            "degree": 0.6281,
+            "closeness": 0.3635,
+            "betweens": 0.0954,
+            "avg_nodes": 9.0087,
+            "total_graphs": 1377
+        }
+    ],
+    [
+        [
+            0.65,
+            5
+        ],
+        {
+            "degree": 0.6309,
+            "closeness": 0.2912,
+            "betweens": 0.0725,
+            "avg_nodes": 11.8805,
+            "total_graphs": 385
+        }
+    ],
+    [
+        [
+            0.85,
+            2
+        ],
+        {
+            "degree": 0.6368,
+            "closeness": 0.3308,
+            "betweens": 0.0788,
+            "avg_nodes": 12.2322,
+            "total_graphs": 521
+        }
+    ],
+    [
+        [
+            0.85,
+            3
+        ],
+        {
+            "degree": 0.6603,
+            "closeness": 0.3022,
+            "betweens": 0.0705,
+            "avg_nodes": 11.4774,
+            "total_graphs": 354
+        }
+    ],
+    [
+        [
+            0.75,
+            4
+        ],
+        {
+            "degree": 0.6703,
+            "closeness": 0.2926,
+            "betweens": 0.0691,
+            "avg_nodes": 11.2,
+            "total_graphs": 325
+        }
+    ],
+    [
+        [
+            0.95,
+            2
+        ],
+        {
+            "degree": 0.6774,
+            "closeness": 0.3168,
+            "betweens": 0.0745,
+            "avg_nodes": 11.0107,
+            "total_graphs": 373
+        }
+    ],
+    [
+        [
+            1.05,
+            2
+        ],
+        {
+            "degree": 0.6797,
+            "closeness": 0.3011,
+            "betweens": 0.0687,
+            "avg_nodes": 10.9323,
+            "total_graphs": 325
+        }
+    ],
+    [
+        [
+            0.15,
+            2
+        ],
+        {
+            "degree": 0.6811,
+            "closeness": 0.3911,
+            "betweens": 0.0983,
+            "avg_nodes": 7.5693,
+            "total_graphs": 1458
+        }
+    ],
+    [
+        [
+            0.75,
+            5
+        ],
+        {
+            "degree": 0.6963,
+            "closeness": 0.2877,
+            "betweens": 0.0678,
+            "avg_nodes": 10.5138,
+            "total_graphs": 290
+        }
+    ],
+    [
+        [
+            0.95,
+            3
+        ],
+        {
+            "degree": 0.7106,
+            "closeness": 0.2836,
+            "betweens": 0.063,
+            "avg_nodes": 10.0534,
+            "total_graphs": 262
+        }
+    ],
+    [
+        [
+            0.85,
+            4
+        ],
+        {
+            "degree": 0.7108,
+            "closeness": 0.2899,
+            "betweens": 0.0649,
+            "avg_nodes": 10.2996,
+            "total_graphs": 277
+        }
+    ],
+    [
+        [
+            1.05,
+            0
+        ],
+        {
+            "degree": 0.7263,
+            "closeness": 0.3789,
+            "betweens": 0.0811,
+            "avg_nodes": 10.8772,
+            "total_graphs": 570
+        }
+    ],
+    [
+        [
+            1.05,
+            3
+        ],
+        {
+            "degree": 0.7334,
+            "closeness": 0.2703,
+            "betweens": 0.0565,
+            "avg_nodes": 9.4891,
+            "total_graphs": 229
+        }
+    ],
+    [
+        [
+            0.85,
+            5
+        ],
+        {
+            "degree": 0.7373,
+            "closeness": 0.2841,
+            "betweens": 0.0621,
+            "avg_nodes": 9.6064,
+            "total_graphs": 249
+        }
+    ],
+    [
+        [
+            0.85,
+            0
+        ],
+        {
+            "degree": 0.7415,
+            "closeness": 0.4073,
+            "betweens": 0.0881,
+            "avg_nodes": 10.7627,
+            "total_graphs": 830
+        }
+    ],
+    [
+        [
+            0.65,
+            1
+        ],
+        {
+            "degree": 0.7418,
+            "closeness": 0.4143,
+            "betweens": 0.0903,
+            "avg_nodes": 10.5449,
+            "total_graphs": 1068
+        }
+    ],
+    [
+        [
+            0.95,
+            0
+        ],
+        {
+            "degree": 0.7432,
+            "closeness": 0.3947,
+            "betweens": 0.0823,
+            "avg_nodes": 10.6406,
+            "total_graphs": 640
+        }
+    ],
+    [
+        [
+            1.05,
+            1
+        ],
+        {
+            "degree": 0.7438,
+            "closeness": 0.3791,
+            "betweens": 0.0792,
+            "avg_nodes": 10.4854,
+            "total_graphs": 513
+        }
+    ],
+    [
+        [
+            0.75,
+            0
+        ],
+        {
+            "degree": 0.7439,
+            "closeness": 0.4129,
+            "betweens": 0.0875,
+            "avg_nodes": 10.7966,
+            "total_graphs": 939
+        }
+    ],
+    [
+        [
+            0.95,
+            1
+        ],
+        {
+            "degree": 0.7495,
+            "closeness": 0.3919,
+            "betweens": 0.0815,
+            "avg_nodes": 10.6265,
+            "total_graphs": 589
+        }
+    ],
+    [
+        [
+            0.85,
+            1
+        ],
+        {
+            "degree": 0.7513,
+            "closeness": 0.4082,
+            "betweens": 0.0868,
+            "avg_nodes": 10.6494,
+            "total_graphs": 753
+        }
+    ],
+    [
+        [
+            0.75,
+            1
+        ],
+        {
+            "degree": 0.7543,
+            "closeness": 0.4149,
+            "betweens": 0.0866,
+            "avg_nodes": 10.8074,
+            "total_graphs": 862
+        }
+    ],
+    [
+        [
+            0.65,
+            0
+        ],
+        {
+            "degree": 0.7578,
+            "closeness": 0.421,
+            "betweens": 0.0921,
+            "avg_nodes": 9.9549,
+            "total_graphs": 1108
+        }
+    ],
+    [
+        [
+            0.95,
+            4
+        ],
+        {
+            "degree": 0.7664,
+            "closeness": 0.2697,
+            "betweens": 0.0559,
+            "avg_nodes": 8.7243,
+            "total_graphs": 214
+        }
+    ],
+    [
+        [
+            1.15,
+            2
+        ],
+        {
+            "degree": 0.7708,
+            "closeness": 0.2914,
+            "betweens": 0.0597,
+            "avg_nodes": 8.9177,
+            "total_graphs": 231
+        }
+    ],
+    [
+        [
+            1.15,
+            0
+        ],
+        {
+            "degree": 0.7719,
+            "closeness": 0.3734,
+            "betweens": 0.0752,
+            "avg_nodes": 9.8449,
+            "total_graphs": 419
+        }
+    ],
+    [
+        [
+            0.55,
+            1
+        ],
+        {
+            "degree": 0.7737,
+            "closeness": 0.4288,
+            "betweens": 0.0919,
+            "avg_nodes": 9.8375,
+            "total_graphs": 1132
+        }
+    ],
+    [
+        [
+            1.15,
+            1
+        ],
+        {
+            "degree": 0.7753,
+            "closeness": 0.3678,
+            "betweens": 0.0722,
+            "avg_nodes": 9.8878,
+            "total_graphs": 392
+        }
+    ],
+    [
+        [
+            1.25,
+            0
+        ],
+        {
+            "degree": 0.7762,
+            "closeness": 0.3651,
+            "betweens": 0.0704,
+            "avg_nodes": 10.0184,
+            "total_graphs": 380
+        }
+    ],
+    [
+        [
+            1.05,
+            4
+        ],
+        {
+            "degree": 0.7784,
+            "closeness": 0.2562,
+            "betweens": 0.05,
+            "avg_nodes": 8.5333,
+            "total_graphs": 195
+        }
+    ],
+    [
+        [
+            0.95,
+            5
+        ],
+        {
+            "degree": 0.7798,
+            "closeness": 0.2594,
+            "betweens": 0.0533,
+            "avg_nodes": 8.397,
+            "total_graphs": 199
+        }
+    ],
+    [
+        [
+            0.55,
+            0
+        ],
+        {
+            "degree": 0.783,
+            "closeness": 0.4326,
+            "betweens": 0.0949,
+            "avg_nodes": 9.3379,
+            "total_graphs": 1169
+        }
+    ],
+    [
+        [
+            1.25,
+            1
+        ],
+        {
+            "degree": 0.7888,
+            "closeness": 0.3615,
+            "betweens": 0.0685,
+            "avg_nodes": 9.8612,
+            "total_graphs": 353
+        }
+    ],
+    [
+        [
+            1.05,
+            5
+        ],
+        {
+            "degree": 0.7964,
+            "closeness": 0.2452,
+            "betweens": 0.0468,
+            "avg_nodes": 7.9167,
+            "total_graphs": 180
+        }
+    ],
+    [
+        [
+            0.45,
+            1
+        ],
+        {
+            "degree": 0.8018,
+            "closeness": 0.4421,
+            "betweens": 0.0969,
+            "avg_nodes": 8.735,
+            "total_graphs": 1249
+        }
+    ],
+    [
+        [
+            1.25,
+            2
+        ],
+        {
+            "degree": 0.8047,
+            "closeness": 0.2838,
+            "betweens": 0.0559,
+            "avg_nodes": 8.1024,
+            "total_graphs": 205
+        }
+    ],
+    [
+        [
+            1.15,
+            3
+        ],
+        {
+            "degree": 0.8092,
+            "closeness": 0.2505,
+            "betweens": 0.0474,
+            "avg_nodes": 8.0056,
+            "total_graphs": 177
+        }
+    ],
+    [
+        [
+            0.45,
+            0
+        ],
+        {
+            "degree": 0.8138,
+            "closeness": 0.4483,
+            "betweens": 0.0992,
+            "avg_nodes": 8.2817,
+            "total_graphs": 1285
+        }
+    ],
+    [
+        [
+            0.35,
+            1
+        ],
+        {
+            "degree": 0.819,
+            "closeness": 0.4509,
+            "betweens": 0.099,
+            "avg_nodes": 8.1723,
+            "total_graphs": 1306
+        }
+    ],
+    [
+        [
+            0.05,
+            5
+        ],
+        {
+            "degree": 0.8344,
+            "closeness": 0.4518,
+            "betweens": 0.0653,
+            "avg_nodes": 4.7993,
+            "total_graphs": 1500
+        }
+    ],
+    [
+        [
+            0.35,
+            0
+        ],
+        {
+            "degree": 0.8369,
+            "closeness": 0.4598,
+            "betweens": 0.1005,
+            "avg_nodes": 7.6234,
+            "total_graphs": 1341
+        }
+    ],
+    [
+        [
+            1.25,
+            3
+        ],
+        {
+            "degree": 0.8465,
+            "closeness": 0.2427,
+            "betweens": 0.044,
+            "avg_nodes": 7.0938,
+            "total_graphs": 160
+        }
+    ],
+    [
+        [
+            1.15,
+            4
+        ],
+        {
+            "degree": 0.8742,
+            "closeness": 0.2352,
+            "betweens": 0.039,
+            "avg_nodes": 6.3667,
+            "total_graphs": 150
+        }
+    ],
+    [
+        [
+            0.25,
+            1
+        ],
+        {
+            "degree": 0.8759,
+            "closeness": 0.4804,
+            "betweens": 0.1031,
+            "avg_nodes": 6.6387,
+            "total_graphs": 1417
+        }
+    ],
+    [
+        [
+            1.15,
+            5
+        ],
+        {
+            "degree": 0.8838,
+            "closeness": 0.2244,
+            "betweens": 0.0368,
+            "avg_nodes": 5.9718,
+            "total_graphs": 142
+        }
+    ],
+    [
+        [
+            0.05,
+            4
+        ],
+        {
+            "degree": 0.8924,
+            "closeness": 0.4757,
+            "betweens": 0.0703,
+            "avg_nodes": 4.2367,
+            "total_graphs": 1500
+        }
+    ],
+    [
+        [
+            1.25,
+            4
+        ],
+        {
+            "degree": 0.9013,
+            "closeness": 0.2293,
+            "betweens": 0.0363,
+            "avg_nodes": 5.7786,
+            "total_graphs": 140
+        }
+    ],
+    [
+        [
+            1.25,
+            5
+        ],
+        {
+            "degree": 0.9238,
+            "closeness": 0.2183,
+            "betweens": 0.0335,
+            "avg_nodes": 5.0229,
+            "total_graphs": 131
+        }
+    ],
+    [
+        [
+            0.25,
+            0
+        ],
+        {
+            "degree": 0.9336,
+            "closeness": 0.5073,
+            "betweens": 0.1068,
+            "avg_nodes": 5.7405,
+            "total_graphs": 1441
+        }
+    ],
+    [
+        [
+            0.15,
+            1
+        ],
+        {
+            "degree": 0.9389,
+            "closeness": 0.5099,
+            "betweens": 0.1063,
+            "avg_nodes": 5.5478,
+            "total_graphs": 1475
+        }
+    ],
+    [
+        [
+            0.05,
+            3
+        ],
+        {
+            "degree": 0.9827,
+            "closeness": 0.5128,
+            "betweens": 0.0792,
+            "avg_nodes": 3.5773,
+            "total_graphs": 1500
+        }
+    ],
+    [
+        [
+            0.05,
+            0
+        ],
+        {
+            "degree": 1.0,
+            "closeness": 0.0,
+            "betweens": 0.0,
+            "avg_nodes": 1.0,
+            "total_graphs": 1500
+        }
+    ],
+    [
+        [
+            0.15,
+            0
+        ],
+        {
+            "degree": 1.0488,
+            "closeness": 0.5559,
+            "betweens": 0.1143,
+            "avg_nodes": 4.4441,
+            "total_graphs": 1486
+        }
+    ],
+    [
+        [
+            0.05,
+            2
+        ],
+        {
+            "degree": 1.1396,
+            "closeness": 0.5757,
+            "betweens": 0.0919,
+            "avg_nodes": 2.8173,
+            "total_graphs": 1500
+        }
+    ],
+    [
+        [
+            0.05,
+            1
+        ],
+        {
+            "degree": 1.456,
+            "closeness": 0.703,
+            "betweens": 0.0,
+            "avg_nodes": 1.952,
+            "total_graphs": 1500
+        }
+    ]
+]

@@ -1,0 +1,66 @@
+factor: 0.05 cutoff: 0 degree: 1.0 nodes: 1 closeness: 0.0 betweens: 0.0
+factor: 0.05 cutoff: 1 degree: 1.0 nodes: 2 closeness: 0.5 betweens: 0.0
+factor: 0.05 cutoff: 2 degree: 0.6667 nodes: 3 closeness: 0.3333 betweens: 0.0
+factor: 0.05 cutoff: 3 degree: 0.6667 nodes: 3 closeness: 0.3333 betweens: 0.0
+factor: 0.05 cutoff: 4 degree: 0.6667 nodes: 3 closeness: 0.3333 betweens: 0.0
+factor: 0.05 cutoff: 5 degree: 0.6667 nodes: 3 closeness: 0.3333 betweens: 0.0
+
+factor: 0.15 cutoff: 0 degree: 0.6667 nodes: 3 closeness: 0.3889 betweens: 0.1667
+factor: 0.15 cutoff: 1 degree: 0.6667 nodes: 4 closeness: 0.3958 betweens: 0.1667
+factor: 0.15 cutoff: 2 degree: 0.4286 nodes: 7 closeness: 0.244 betweens: 0.0286
+factor: 0.15 cutoff: 3 degree: 0.4286 nodes: 7 closeness: 0.244 betweens: 0.0286
+factor: 0.15 cutoff: 4 degree: 0.4286 nodes: 7 closeness: 0.244 betweens: 0.0286
+factor: 0.15 cutoff: 5 degree: 0.4286 nodes: 7 closeness: 0.244 betweens: 0.0286
+
+factor: 0.25 cutoff: 0 degree: 0.6667 nodes: 4 closeness: 0.3958 betweens: 0.1667
+factor: 0.25 cutoff: 1 degree: 0.6 nodes: 5 closeness: 0.3776 betweens: 0.1833
+factor: 0.25 cutoff: 2 degree: 0.3929 nodes: 8 closeness: 0.2331 betweens: 0.0387
+factor: 0.25 cutoff: 3 degree: 0.3929 nodes: 8 closeness: 0.2331 betweens: 0.0387
+factor: 0.25 cutoff: 4 degree: 0.3929 nodes: 8 closeness: 0.2331 betweens: 0.0387
+factor: 0.25 cutoff: 5 degree: 0.3929 nodes: 8 closeness: 0.2331 betweens: 0.0387
+
+factor: 0.35 cutoff: 0 degree: 0.5333 nodes: 6 closeness: 0.3498 betweens: 0.2
+factor: 0.35 cutoff: 1 degree: 0.5333 nodes: 6 closeness: 0.3498 betweens: 0.2
+factor: 0.35 cutoff: 2 degree: 0.3111 nodes: 10 closeness: 0.1925 betweens: 0.0375
+factor: 0.35 cutoff: 3 degree: 0.3111 nodes: 10 closeness: 0.1925 betweens: 0.0375
+factor: 0.35 cutoff: 4 degree: 0.3111 nodes: 10 closeness: 0.1925 betweens: 0.0375
+factor: 0.35 cutoff: 5 degree: 0.3111 nodes: 10 closeness: 0.1925 betweens: 0.0375
+
+factor: 0.45 cutoff: 0 degree: 0.5333 nodes: 6 closeness: 0.3498 betweens: 0.2
+factor: 0.45 cutoff: 1 degree: 0.5333 nodes: 6 closeness: 0.3498 betweens: 0.2
+factor: 0.45 cutoff: 2 degree: 0.2727 nodes: 11 closeness: 0.1712 betweens: 0.0303
+factor: 0.45 cutoff: 3 degree: 0.2727 nodes: 11 closeness: 0.1712 betweens: 0.0303
+factor: 0.45 cutoff: 4 degree: 0.2727 nodes: 11 closeness: 0.1712 betweens: 0.0303
+factor: 0.45 cutoff: 5 degree: 0.2727 nodes: 11 closeness: 0.1712 betweens: 0.0303
+
+factor: 0.55 cutoff: 0 degree: 0.5333 nodes: 6 closeness: 0.3498 betweens: 0.2
+factor: 0.55 cutoff: 1 degree: 0.5714 nodes: 7 closeness: 0.3752 betweens: 0.1571
+factor: 0.55 cutoff: 2 degree: 0.2527 nodes: 14 closeness: 0.1637 betweens: 0.0206
+factor: 0.55 cutoff: 3 degree: 0.2527 nodes: 14 closeness: 0.1637 betweens: 0.0206
+factor: 0.55 cutoff: 4 degree: 0.2527 nodes: 14 closeness: 0.1637 betweens: 0.0206
+factor: 0.55 cutoff: 5 degree: 0.2527 nodes: 14 closeness: 0.1637 betweens: 0.0206
+
+factor: 0.65 cutoff: 0 degree: 0.5714 nodes: 7 closeness: 0.3752 betweens: 0.1571
+factor: 0.65 cutoff: 1 degree: 0.5714 nodes: 7 closeness: 0.3752 betweens: 0.1571
+factor: 0.65 cutoff: 2 degree: 0.225 nodes: 16 closeness: 0.1489 betweens: 0.0173
+factor: 0.65 cutoff: 3 degree: 0.225 nodes: 16 closeness: 0.1489 betweens: 0.0173
+factor: 0.65 cutoff: 4 degree: 0.225 nodes: 16 closeness: 0.1489 betweens: 0.0173
+factor: 0.65 cutoff: 5 degree: 0.225 nodes: 16 closeness: 0.1489 betweens: 0.0173
+
+factor: 0.75 cutoff: 0 degree: 0.5714 nodes: 7 closeness: 0.3752 betweens: 0.1571
+factor: 0.75 cutoff: 1 degree: 0.4643 nodes: 8 closeness: 0.3052 betweens: 0.1012
+factor: 0.75 cutoff: 2 degree: 0.1861 nodes: 22 closeness: 0.128 betweens: 0.0177
+factor: 0.75 cutoff: 3 degree: 0.1861 nodes: 22 closeness: 0.128 betweens: 0.0177
+factor: 0.75 cutoff: 4 degree: 0.1861 nodes: 22 closeness: 0.128 betweens: 0.0177
+factor: 0.75 cutoff: 5 degree: 0.1861 nodes: 22 closeness: 0.128 betweens: 0.0177
+
+factor: 0.85 cutoff: 0 degree: 0.4643 nodes: 8 closeness: 0.3052 betweens: 0.1012
+factor: 0.85 cutoff: 1 degree: 0.3778 nodes: 10 closeness: 0.2978 betweens: 0.0958
+
+factor: 0.95 cutoff: 0 degree: 0.3333 nodes: 12 closeness: 0.2653 betweens: 0.0848
+factor: 0.95 cutoff: 1 degree: 0.3205 nodes: 13 closeness: 0.2548 betweens: 0.0787
+
+factor: 1.05 cutoff: 0 degree: 0.2857 nodes: 14 closeness: 0.2239 betweens: 0.0618
+factor: 1.05 cutoff: 1 degree: 0.2426 nodes: 17 closeness: 0.207 betweens: 0.0478
+
+factor: 1.15 cutoff: 0 degree: 0.2035 nodes: 22 closeness: 0.1719 betweens: 0.0314
