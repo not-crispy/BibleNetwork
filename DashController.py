@@ -12,11 +12,12 @@ class StyleSheet():
         self.label = 'data(label)'
         self.label_size = 12
         self.colours = {
-            'default': 'grey',
-            'active': '#BFD7B5', # green
-            'hl1': '#B10DC9', # mauve
-            'hl2': 'purple',
-            'focus': 'green',
+            'default': '#acaeb4', #grey light
+            'default-light': '#CFD2DB', #grey light
+            'active': '#41A3D6', # light blue
+            'hl1': '#2690D5', # blue
+            'hl2': '#226B97', # dark blue
+            'focus': '#226B97', # blue
             'buttons': 'grey',
 
         }
@@ -122,6 +123,12 @@ class StyleSheet():
                 }
             },
             {
+                'selector': 'edge',
+                'style': {
+                    'line-color': self.colours['default'],
+                }
+            },
+            {
                 'selector': 'node[active="active"]',
                 'style': {
                     'background-color': self.colours['active'],
@@ -139,7 +146,8 @@ class StyleSheet():
         }, {
             'selector': 'edge',
             'style': {
-                'opacity': 0.2,
+                'opacity': 0.3,
+                'line-color': self.colours['default-light'],
                 # "curve-style": "bezier",
             }
         }, {
@@ -152,7 +160,7 @@ class StyleSheet():
                 "opacity": 1,
 
                 "label": self.label,
-                "color": self.colours['hl1'],
+                "color": self.colours['hl2'],
                 "text-opacity": 1,
                 "font-size": self.label_size,
                 'z-index': 100
@@ -171,17 +179,55 @@ class DashController():
     def get_em(self, children, id=""):
         return html.Em(children=children) if id == "" else html.Em(children=children, id=id)
     
-    def get_div(self, children, id=""):
-        return html.Div(children=children) if id == "" else html.Div(children=children, id=id)
+    def get_div(self, children, id="", className=""):
+        return html.Div(children=children, id=id, className=className)
 
     def get_p(self, children, id=""):
         return html.P(children=children) if id == "" else html.P(children=children, id=id)        
+    
+    def get_span(self, children, id=""):
+        return html.Span(children=children) if id == "" else html.Span(children=children, id=id)
 
-    def get_verse(self, id):
+    def get_a(self, children, href="", id=""):
+        return html.A(children=children, href=href) if id == "" else html.A(children=children, href=href, id=id)     
+
+    def get_input(self, id="", type="", placeholder=""):
+        return dcc.Input(id=id, type=type, placeholder=placeholder, className="btn")
+
+    def get_button(self, id="", children=""):
+        classes = '' #'btn btn-outline-secondary px-4 me-sm-3'
+        return html.Button(id=id, value=id, type='button', className=classes, children=children)      
+
+    def get_verse(self, id, get_name=False):
         """Returns verse as a div."""
-        name = self.get_em(self.network.get_fullname(id))
+        name = self.get_em(self.network.get_fullname(id)) if get_name else ""
         verse = self.get_p(self.network.get_verse(id))
         return self.get_div([name, verse])
+    
+    def get_context(self, id):
+        context = self.network.get_context(id)
+        verses = []
+
+        # Retreive passage. If active, place <span> tags around it
+        for id in context['ids']:
+            verse = self.network.get_verse(id)
+            verse = self.get_span(verse, "context-active") if id == context['active'] else verse
+            verses.append(verse)
+
+        verses = self.get_p(verses)
+        return verses
+    
+    def get_topheading(self, id):
+        # back = self.get_a(self.get_button(id="previous", children="◄"))
+        # forward =  self.get_a(self.get_button(id="next", children="\u25BA"))
+        back = self.get_button(id="previous", children="◄")
+        forward = self.get_button(id="next", children="\u25BA")
+        name = self.get_span([self.network.get_fullname(id)])
+        # name = self.get_div(name, className='title')
+        name = self.get_div([back, name, forward], className='title')
+        verses = self.get_verse(id)
+
+        return self.get_div([name, verses])
     
     def get_passage(self, data):
         """Returns passage as a div."""
@@ -217,9 +263,9 @@ class DashController():
     def get_troubleshoots(self):
         inputs = html.Div([
             html.Span(["cross-refs:"]),
-            dcc.Input(id=f"crossrefs-troubleshoot", type='number', placeholder=5),
+            self.get_input(id=f"crossrefs-troubleshoot", type='number', placeholder=5),
             html.Span(["factor:"]),  
-            dcc.Input(id=f"factor-troubleshoot", type='number', placeholder=0.35),
+            self.get_input(id=f"factor-troubleshoot", type='number', placeholder=0.35),
             ])
         
         return inputs
@@ -227,7 +273,7 @@ class DashController():
     def get_search(self):
         msg = "type a verse... eg. Matthew 4:3"
         inputs = html.Div([  
-            dcc.Input(id=f"search", type='text', placeholder=f"{msg}")
+            self.get_input(id=f"search", type='text', placeholder=f"{msg}")
             ])
         
         return inputs
@@ -252,7 +298,7 @@ class DashController():
         count = 1
         max = 1
         path = nodeData['path']
-        
+
         # get passage and create it
         for passage in reversed(self.network.get_path_passages(path)):
             children.append(self.get_passage(passage))
@@ -271,7 +317,7 @@ class DashController():
         for crossref in self.network.get_crossrefs(source_id):
             # build crossreferences
             id = crossref[0]
-            children.append(self.get_verse(id))
+            children.append(self.get_verse(id, get_name=True))
 
             # don't get more than max cross references
             count = count + 1 if count < max else -1 
@@ -331,11 +377,12 @@ class DashController():
                     },
             elements=edges+nodes,
             stylesheet=styles,
-            style={'width': '100%', 'height': '450px'},
+            style={'width': '100%', 'height': '400px'},
             zoom=1,
-            maxZoom=1.4,
+            maxZoom=1.3,
             minZoom=0.4,
             wheelSensitivity=0.1,
+            responsive=True,
         )
         return fig
         

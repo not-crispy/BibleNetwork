@@ -12,6 +12,8 @@ class BibleNetwork:
 
         self._init_verses()
         self._init_crossrefs()
+        self._first_id = 0
+        self._last_id = len(self.bible.nodes()) - 1
         self.active = self.get_random_node() # set random verse as active node
                 
     def get_active(self):
@@ -139,6 +141,14 @@ class BibleNetwork:
         """Get verse of given verse by id (e.g. 340). Get active verse if no id is supplied."""
         return self.active["content"] if id == "" else self.get_node(id)["content"]
     
+    def get_context(self, id=""):
+        """Get verse, and the verse before and after this verse."""
+        id = self.get_id() if id == "" else id
+        start = id if id == self._first_id else id - 1
+        end = id if id == self._last_id else id + 1
+
+        return self.get_passage(start, end, active=id)
+
     def get_node(self, id):
         return self.bible.nodes(data=True)[id]
     
@@ -177,11 +187,13 @@ class BibleNetwork:
     def _remove_crossrefs_by_weight(self, crossrefs, weights={}):
         """Remove crossrefs with the given weight/s"""
         new_crossrefs = []
-        weights.discard(100) # Do not remove "100" weights
 
         # Remove any verse with the given weight
         for crossref in crossrefs:
-            if crossref[1]['weight'] not in weights:
+            significant = crossref[1]['weight'] > 86 # Do not remove "100" weights
+            if significant:
+                new_crossrefs.append(crossref)
+            elif crossref[1]['weight'] not in weights:
                 new_crossrefs.append(crossref)
 
         return new_crossrefs
@@ -302,7 +314,8 @@ class BibleNetwork:
             graphs[(f, k)] = G
 
         # A lower degree approximates a lower serendipity (i.e. more optimal)
-        top_graph = sorted(centrality.items(), key=lambda x: x[1]['degree'])[0][0]
+        top_graph = sorted(centrality.items(), key=lambda x: x[1]['betweens'])[0][0]
+        # top_graph = sorted(centrality.items(), key=lambda x: x[1]['degree'])[0][0]
         print(f"selecting... factor: {top_graph[0]} cutoff: {top_graph[1]}")     
         return graphs[top_graph]
 
@@ -497,8 +510,10 @@ if __name__ == "__main__":
     print(network.get_crossrefs_ids(node, 5, True))
     print(network.get_best_subgraph(node))
     path = network.get_shortest_path(1, 10000)[1]
-    print(network.get_path_passages(path))
-
+    print(network.get_passage(1, 3, 2))
+    
+    node = network.get_id_by_name("Tit.2.14")
+    print(network.get_crossrefs_ids(node, 5, preprocess=True))
 
     # results = network.k_test(1500)
     # write_json(results, dump_path)

@@ -2,6 +2,51 @@ canvas {
     left: 0;
 }
 
+body {
+    background-color: #ffffff,
+}
+
+#inputs {
+    position: absolute;
+    left: calc(5px + 1vw);
+    top: calc(20px + 1vh);
+    z-index: 5;
+}
+
+input.btn {
+    border: 1px solid lightgrey !important; 
+    text-align: left;
+}
+
+#header {
+    font: 1.4em Tahoma, Arial, Helvetica, sans-serif;
+    font-weight: 300;
+    background-color: #232E32;
+    color: white;
+}
+
+#main-verse {
+    font-size: 0.9em;
+}
+
+#main-verse .title a {
+    font-family: Tahoma, Arial, Helvetica, sans-serif;
+    margin: 0 5px;
+    color: #41A3D6; /* color['active'] */
+}
+
+#main-verse .title a:hover {
+    text-decoration: solid;
+    color: #226B97; /* color['active'] */
+}
+
+#main-verse .title {
+    /* font-weight: 650; */
+    font-family: Tahoma, Arial, Helvetica, sans-serif;
+    margin-bottom: 4px;
+    display: block;
+}
+
 /* p { 
     color: red;
 } */
