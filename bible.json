@@ -5,8 +5,8 @@
         "total": "50",
         "volume": "OT",
         "spellings": [
-            "Gen",
-            "Genesis"
+            "gen",
+            "genesis"
         ]
     },
     "Exodus": {
@@ -15,8 +15,8 @@
         "total": "40",
         "volume": "OT",
         "spellings": [
-            "Exod",
-            "Exodus"
+            "exod",
+            "exodus"
         ]
     },
     "Leviticus": {
@@ -25,8 +25,8 @@
         "total": "27",
         "volume": "OT",
         "spellings": [
-            "Lev",
-            "Leviticus"
+            "lev",
+            "leviticus"
         ]
     },
     "Numbers": {
@@ -35,8 +35,8 @@
         "total": "36",
         "volume": "OT",
         "spellings": [
-            "Num",
-            "Numbers"
+            "num",
+            "numbers"
         ]
     },
     "Deuteronomy": {
@@ -45,8 +45,8 @@
         "total": "34",
         "volume": "OT",
         "spellings": [
-            "Deut",
-            "Deuteronomy"
+            "deut",
+            "deuteronomy"
         ]
     },
     "Joshua": {
@@ -55,8 +55,8 @@
         "total": "24",
         "volume": "OT",
         "spellings": [
-            "Josh",
-            "Joshua"
+            "josh",
+            "joshua"
         ]
     },
     "Judges": {
@@ -65,8 +65,8 @@
         "total": "21",
         "volume": "OT",
         "spellings": [
-            "Judg",
-            "Judges"
+            "judg",
+            "judges"
         ]
     },
     "Ruth": {
@@ -75,8 +75,8 @@
         "total": "4",
         "volume": "OT",
         "spellings": [
-            "Ruth",
-            "Ruth"
+            "ruth",
+            "ruth"
         ]
     },
     "1 Samuel": {
@@ -85,8 +85,11 @@
         "total": "31",
         "volume": "OT",
         "spellings": [
-            "1Sam",
-            "1 Samuel"
+            "1sam",
+            "1 samuel",
+            "1samuel",
+            "1-samuel",
+            "1%20samuel"
         ]
     },
     "2 Samuel": {
@@ -95,8 +98,11 @@
         "total": "24",
         "volume": "OT",
         "spellings": [
-            "2Sam",
-            "2 Samuel"
+            "2sam",
+            "2 samuel",
+            "2samuel",
+            "2-samuel",
+            "2%20samuel"
         ]
     },
     "1 Kings": {
@@ -105,8 +111,11 @@
         "total": "22",
         "volume": "OT",
         "spellings": [
-            "1Kgs",
-            "1 Kings"
+            "1kgs",
+            "1 kings",
+            "1kings",
+            "1-kings",
+            "1%20kings"
         ]
     },
     "2 Kings": {
@@ -115,8 +124,11 @@
         "total": "25",
         "volume": "OT",
         "spellings": [
-            "2Kgs",
-            "2 Kings"
+            "2kgs",
+            "2 kings",
+            "2kings",
+            "2-kings",
+            "2%20kings"
         ]
     },
     "1 Chronicles": {
@@ -125,8 +137,11 @@
         "total": "29",
         "volume": "OT",
         "spellings": [
-            "1Chr",
-            "1 Chronicles"
+            "1chr",
+            "1 chronicles",
+            "1chronicles",
+            "1-chronicles",
+            "1%20chronicles"
         ]
     },
     "2 Chronicles": {
@@ -135,8 +150,11 @@
         "total": "36",
         "volume": "OT",
         "spellings": [
-            "2Chr",
-            "2 Chronicles"
+            "2chr",
+            "2 chronicles",
+            "2chronicles",
+            "2-chronicles",
+            "2%20chronicles"
         ]
     },
     "Ezra": {
@@ -145,8 +163,8 @@
         "total": "10",
         "volume": "OT",
         "spellings": [
-            "Ezra",
-            "Ezra"
+            "ez",
+            "ezra"
         ]
     },
     "Nehemiah": {
@@ -155,8 +173,8 @@
         "total": "13",
         "volume": "OT",
         "spellings": [
-            "Neh",
-            "Nehemiah"
+            "neh",
+            "nehemiah"
         ]
     },
     "Esther": {
@@ -165,8 +183,8 @@
         "total": "10",
         "volume": "OT",
         "spellings": [
-            "Esth",
-            "Esther"
+            "esth",
+            "esther"
         ]
     },
     "Job": {
@@ -175,8 +193,8 @@
         "total": "42",
         "volume": "OT",
         "spellings": [
-            "Job",
-            "Job"
+            "job",
+            "job"
         ]
     },
     "Psalms": {
@@ -185,8 +203,8 @@
         "total": "150",
         "volume": "OT",
         "spellings": [
-            "Ps",
-            "Psalms"
+            "ps",
+            "psalms"
         ]
     },
     "Proverbs": {
@@ -195,8 +213,8 @@
         "total": "31",
         "volume": "OT",
         "spellings": [
-            "Prov",
-            "Proverbs"
+            "prov",
+            "proverbs"
         ]
     },
     "Ecclesiastes": {
@@ -205,8 +223,8 @@
         "total": "12",
         "volume": "OT",
         "spellings": [
-            "Eccl",
-            "Ecclesiastes"
+            "eccl",
+            "ecclesiastes"
         ]
     },
     "Song of Solomon": {
@@ -215,8 +233,11 @@
         "total": "8",
         "volume": "OT",
         "spellings": [
-            "Song",
-            "Song of Solomon"
+            "song",
+            "song of solomon",
+            "song-of-solomon",
+            "songofsolomon",
+            "song%20of%20solomon"
         ]
     },
     "Isaiah": {
@@ -225,8 +246,8 @@
         "total": "66",
         "volume": "OT",
         "spellings": [
-            "Isa",
-            "Isaiah"
+            "isa",
+            "isaiah"
         ]
     },
     "Jeremiah": {
@@ -235,8 +256,8 @@
         "total": "52",
         "volume": "OT",
         "spellings": [
-            "Jer",
-            "Jeremiah"
+            "jer",
+            "jeremiah"
         ]
     },
     "Lamentations": {
@@ -245,8 +266,8 @@
         "total": "5",
         "volume": "OT",
         "spellings": [
-            "Lam",
-            "Lamentations"
+            "lam",
+            "lamentations"
         ]
     },
     "Ezekiel": {
@@ -255,8 +276,8 @@
         "total": "48",
         "volume": "OT",
         "spellings": [
-            "Ezek",
-            "Ezekiel"
+            "ezek",
+            "ezekiel"
         ]
     },
     "Daniel": {
@@ -265,8 +286,8 @@
         "total": "12",
         "volume": "OT",
         "spellings": [
-            "Dan",
-            "Daniel"
+            "dan",
+            "daniel"
         ]
     },
     "Hosea": {
@@ -275,8 +296,8 @@
         "total": "14",
         "volume": "OT",
         "spellings": [
-            "Hos",
-            "Hosea"
+            "hos",
+            "hosea"
         ]
     },
     "Joel": {
@@ -285,8 +306,8 @@
         "total": "3",
         "volume": "OT",
         "spellings": [
-            "Joel",
-            "Joel"
+            "joel",
+            "joel"
         ]
     },
     "Amos": {
@@ -295,8 +316,8 @@
         "total": "9",
         "volume": "OT",
         "spellings": [
-            "Amos",
-            "Amos"
+            "amos",
+            "amos"
         ]
     },
     "Obadiah": {
@@ -305,8 +326,8 @@
         "total": "1",
         "volume": "OT",
         "spellings": [
-            "Obad",
-            "Obadiah"
+            "obad",
+            "obadiah"
         ]
     },
     "Jonah": {
@@ -315,8 +336,8 @@
         "total": "4",
         "volume": "OT",
         "spellings": [
-            "Jonah",
-            "Jonah"
+            "jonah",
+            "jonah"
         ]
     },
     "Micah": {
@@ -325,8 +346,8 @@
         "total": "7",
         "volume": "OT",
         "spellings": [
-            "Mic",
-            "Micah"
+            "mic",
+            "micah"
         ]
     },
     "Nahum": {
@@ -335,8 +356,8 @@
         "total": "3",
         "volume": "OT",
         "spellings": [
-            "Nah",
-            "Nahum"
+            "nah",
+            "nahum"
         ]
     },
     "Habakkuk": {
@@ -345,8 +366,8 @@
         "total": "3",
         "volume": "OT",
         "spellings": [
-            "Hab",
-            "Habakkuk"
+            "hab",
+            "habakkuk"
         ]
     },
     "Zephaniah": {
@@ -355,8 +376,8 @@
         "total": "3",
         "volume": "OT",
         "spellings": [
-            "Zeph",
-            "Zephaniah"
+            "zeph",
+            "zephaniah"
         ]
     },
     "Haggai": {
@@ -365,8 +386,8 @@
         "total": "2",
         "volume": "OT",
         "spellings": [
-            "Hag",
-            "Haggai"
+            "hag",
+            "haggai"
         ]
     },
     "Zechariah": {
@@ -375,8 +396,8 @@
         "total": "14",
         "volume": "OT",
         "spellings": [
-            "Zech",
-            "Zechariah"
+            "zech",
+            "zechariah"
         ]
     },
     "Malachi": {
@@ -385,8 +406,8 @@
         "total": "4",
         "volume": "OT",
         "spellings": [
-            "Mal",
-            "Malachi"
+            "mal",
+            "malachi"
         ]
     },
     "Matthew": {
@@ -395,8 +416,8 @@
         "total": "28",
         "volume": "NT",
         "spellings": [
-            "Matt",
-            "Matthew"
+            "matt",
+            "matthew"
         ]
     },
     "Mark": {
@@ -405,8 +426,8 @@
         "total": "16",
         "volume": "NT",
         "spellings": [
-            "Mark",
-            "Mark"
+            "mark",
+            "mark"
         ]
     },
     "Luke": {
@@ -415,8 +436,8 @@
         "total": "24",
         "volume": "NT",
         "spellings": [
-            "Luke",
-            "Luke"
+            "luke",
+            "luke"
         ]
     },
     "John": {
@@ -425,8 +446,8 @@
         "total": "21",
         "volume": "NT",
         "spellings": [
-            "John",
-            "John"
+            "john",
+            "john"
         ]
     },
     "Acts": {
@@ -435,8 +456,8 @@
         "total": "28",
         "volume": "NT",
         "spellings": [
-            "Acts",
-            "Acts"
+            "acts",
+            "acts"
         ]
     },
     "Romans": {
@@ -445,8 +466,8 @@
         "total": "16",
         "volume": "NT",
         "spellings": [
-            "Rom",
-            "Romans"
+            "rom",
+            "romans"
         ]
     },
     "1 Corinthians": {
@@ -455,8 +476,11 @@
         "total": "16",
         "volume": "NT",
         "spellings": [
-            "1Cor",
-            "1 Corinthians"
+            "1cor",
+            "1 corinthians",
+            "1corinthians",
+            "1-corinthians",
+            "1%20corinthians"
         ]
     },
     "2 Corinthians": {
@@ -465,8 +489,11 @@
         "total": "13",
         "volume": "NT",
         "spellings": [
-            "2Cor",
-            "2 Corinthians"
+            "2cor",
+            "2 corinthians",
+            "2corinthians",
+            "2-corinthians",
+            "2%20corinthians"
         ]
     },
     "Galatians": {
@@ -475,8 +502,8 @@
         "total": "6",
         "volume": "NT",
         "spellings": [
-            "Gal",
-            "Galatians"
+            "gal",
+            "galatians"
         ]
     },
     "Ephesians": {
@@ -485,8 +512,8 @@
         "total": "6",
         "volume": "NT",
         "spellings": [
-            "Eph",
-            "Ephesians"
+            "eph",
+            "ephesians"
         ]
     },
     "Philippians": {
@@ -495,8 +522,8 @@
         "total": "4",
         "volume": "NT",
         "spellings": [
-            "Phil",
-            "Philippians"
+            "phil",
+            "philippians"
         ]
     },
     "Colossians": {
@@ -505,8 +532,8 @@
         "total": "4",
         "volume": "NT",
         "spellings": [
-            "Col",
-            "Colossians"
+            "col",
+            "colossians"
         ]
     },
     "1 Thessalonians": {
@@ -515,8 +542,11 @@
         "total": "5",
         "volume": "NT",
         "spellings": [
-            "1Thess",
-            "1 Thessalonians"
+            "1thess",
+            "1 thessalonians",
+            "1thessalonians",
+            "1-thessalonians",
+            "1%20thessalonians"
         ]
     },
     "2 Thessalonians": {
@@ -525,8 +555,11 @@
         "total": "3",
         "volume": "NT",
         "spellings": [
-            "2Thess",
-            "2 Thessalonians"
+            "2thess",
+            "2 thessalonians",
+            "2thessalonians",
+            "2-thessalonians",
+            "2%20thessalonians"
         ]
     },
     "1 Timothy": {
@@ -535,8 +568,11 @@
         "total": "6",
         "volume": "NT",
         "spellings": [
-            "1Tim",
-            "1 Timothy"
+            "1tim",
+            "1 timothy",
+            "1timothy",
+            "1-timothy",
+            "1%20timothy"
         ]
     },
     "2 Timothy": {
@@ -545,8 +581,11 @@
         "total": "4",
         "volume": "NT",
         "spellings": [
-            "2Tim",
-            "2 Timothy"
+            "2tim",
+            "2 timothy",
+            "2timothy",
+            "2-timothy",
+            "2%20timothy"
         ]
     },
     "Titus": {
@@ -555,8 +594,8 @@
         "total": "3",
         "volume": "NT",
         "spellings": [
-            "Titus",
-            "Titus"
+            "tit",
+            "titus"
         ]
     },
     "Philemon": {
@@ -565,8 +604,8 @@
         "total": "1",
         "volume": "NT",
         "spellings": [
-            "Phlm",
-            "Philemon"
+            "phlm",
+            "philemon"
         ]
     },
     "Hebrews": {
@@ -575,7 +614,7 @@
         "total": "13",
         "volume": "NT",
         "spellings": [
-            "Heb",
+            "heb",
             "Hebrews"
         ]
     },
@@ -585,7 +624,7 @@
         "total": "5",
         "volume": "NT",
         "spellings": [
-            "Jas",
+            "jas",
             "James"
         ]
     },
@@ -595,8 +634,11 @@
         "total": "5",
         "volume": "NT",
         "spellings": [
-            "1Pet",
-            "1 Peter"
+            "1pet",
+            "1 peter",
+            "1peter",
+            "1-peter",
+            "1%20peter"
         ]
     },
     "2 Peter": {
@@ -605,8 +647,11 @@
         "total": "3",
         "volume": "NT",
         "spellings": [
-            "2Pet",
-            "2 Peter"
+            "2pet",
+            "2 peter",
+            "2peter",
+            "2-peter",
+            "2%20peter"
         ]
     },
     "1 John": {
@@ -615,8 +660,11 @@
         "total": "5",
         "volume": "NT",
         "spellings": [
-            "1John",
-            "1 John"
+            "1john",
+            "1 john",
+            "1john",
+            "1-john",
+            "1%20john"
         ]
     },
     "2 John": {
@@ -625,8 +673,11 @@
         "total": "1",
         "volume": "NT",
         "spellings": [
-            "2John",
-            "2 John"
+            "2john",
+            "2 john",
+            "2john",
+            "2-john",
+            "2%20john"
         ]
     },
     "3 John": {
@@ -635,8 +686,11 @@
         "total": "1",
         "volume": "NT",
         "spellings": [
-            "3John",
-            "3 John"
+            "3john",
+            "3 john",
+            "3john",
+            "3-john",
+            "3%20john"
         ]
     },
     "Jude": {
@@ -645,8 +699,8 @@
         "total": "1",
         "volume": "NT",
         "spellings": [
-            "Jude",
-            "Jude"
+            "jude",
+            "jude"
         ]
     },
     "Revelation": {
@@ -655,8 +709,8 @@
         "total": "22",
         "volume": "NT",
         "spellings": [
-            "Rev",
-            "Revelation"
+            "rev",
+            "revelation"
         ]
     }
 }

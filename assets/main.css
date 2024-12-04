@@ -1,4 +1,23 @@
-canvas {
+@media only screen and (max-width: 900px) {
+
+    #info-box-wrapper {
+        transform: translate(-50%, -50%);
+        /* scale(0.7); */
+        /* font-size: 1.3em; */
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    #info-box-wrapper {
+        display: none;
+    }
+
+    #graph {
+        height: 60vh;
+    }
+} 
+    
+    canvas {
     left: 0;
 }
 
@@ -6,11 +25,57 @@ body {
     background-color: #ffffff,
 }
 
-#inputs {
+#graph {
+    z-index: 2;
+}
+
+#float-left {
     position: absolute;
     left: calc(5px + 1vw);
     top: calc(20px + 1vh);
     z-index: 5;
+    width: 300px;
+    text-align: left;
+}
+
+#float-right {
+    position: absolute;
+    right: calc(5px + 1vw);
+    top: calc(20px + 1vh);
+    width: 300px;
+}
+
+#info-box {
+    position: absolute;
+    padding: 15px 10px;
+    background-color: unset;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid black;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    display: none;
+    text-wrap: pretty;
+    max-width: 28vw;
+    width: max-content;
+    min-width: 225px;
+    font-size: 0.85em;
+    transform: translate(-50%, -50%);
+    overflow: auto;
+    max-height: 16vh;
+}
+
+#info-box p {
+    margin: 0;
+}
+
+.absolute-centre {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+ #info-box-wrapper  {
+    z-index: 10;
 }
 
 input.btn {
@@ -19,29 +84,37 @@ input.btn {
 }
 
 #header {
-    font: 1.4em Tahoma, Arial, Helvetica, sans-serif;
-    font-weight: 300;
+    font: 1.1em Tahoma, Arial, Helvetica, sans-serif;
+    font-weight: 500;
     background-color: #232E32;
     color: white;
 }
 
 #main-verse {
     font-size: 0.9em;
+    min-width: 250px;
+    max-width: 700px;
+    margin: auto;
+    text-wrap: pretty;
+    padding: 0;
+    /* position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0; */
 }
 
 #main-verse .title a {
     font-family: Tahoma, Arial, Helvetica, sans-serif;
     margin: 0 5px;
-    color: #41A3D6; /* color['active'] */
+    color: #6cbccc; /* color['hl3'] */
 }
 
 #main-verse .title a:hover {
     text-decoration: solid;
-    color: #226B97; /* color['active'] */
+    color: #6cbccc; /* color['hl3'] */
 }
 
 #main-verse .title {
-    /* font-weight: 650; */
     font-family: Tahoma, Arial, Helvetica, sans-serif;
     margin-bottom: 4px;
     display: block;

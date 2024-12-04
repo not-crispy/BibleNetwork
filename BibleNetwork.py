@@ -123,6 +123,14 @@ class BibleNetwork:
 
         return f"{book} {chap}:{verse}"
     
+    def get_dictname(self, id=""):
+        id = self.get_id() if id == "" else id
+        return {
+                "bk": self.get_node(id)["book"].replace(" ", "-"),
+                "ch": self.get_node(id)["chap"],
+                "vs": self.get_node(id)["verse"]
+                }
+    
     def sanitise(self, text):
         return ''.join(char for char in text if char.isalnum())
     
@@ -267,9 +275,15 @@ class BibleNetwork:
         id = id if type(id) is set else {id} # must be in form {1} or {1,45,33231}
         nodes = self._get_cluster(factor, id)[0]
         count = 0
+        count_k = 0
 
-         # Be more sensitive
-        while len(nodes) < 15 and count < 3:
+        # Be more sensitive
+        while len(nodes) < 3 and count_k < 5:
+            factor = factor + 0.3
+            nodes = self._get_cluster(factor, id)[0]
+            count_k += 1
+
+        while len(nodes) < 15 and count < 5:
             factor = factor + 0.1
             nodes = self._get_cluster(factor, id)[0]
             count += 1
@@ -306,12 +320,22 @@ class BibleNetwork:
         pairs = [(0.35, 5), (0.55, 4), (0.65, 2), (0.85, 0)]
         centrality = {}
         graphs = {}
+        max_nodes = 0
 
         # Try a few subgraphs
         for f, k in pairs:
             G = self.get_related_subgraph_force_crossrefs(factor=f, id=id, how_many=k)
             centrality[(f, k)] = self.get_centrality_measures(G)
             graphs[(f, k)] = G
+            max_nodes = len(G) if len(G) > max_nodes else max_nodes
+            # print(f"centrality: {centrality[(f, k)]} length: {len(G)}")
+            
+        # Remove any very small subgraphs if a larger one exists
+        for pair, G in graphs.items():
+            if max_nodes > 3 and len(G) < 3:
+                print(pair, G)      
+                centrality.pop(pair) 
+                print(centrality)     
 
         # A lower degree approximates a lower serendipity (i.e. more optimal)
         top_graph = sorted(centrality.items(), key=lambda x: x[1]['betweens'])[0][0]
@@ -319,15 +343,22 @@ class BibleNetwork:
         print(f"selecting... factor: {top_graph[0]} cutoff: {top_graph[1]}")     
         return graphs[top_graph]
 
-    def previous_verse(self):
-        prev_verse = self.get_id() - 1
-        self.active = self.get_node(prev_verse)
-        #print(f"Your new verse is:\n{self.active}")
+    def previous_verse(self, id=""):
+        id = self.get_id if id == "" else id
+        id = id -1
 
-    def next_verse(self):
-        next_verse = self.get_id() + 1
-        self.active = self.get_node(next_verse)
-        #print(f"Your new verse is:\n{self.active}")
+        # Check verse still exists (i.e. is not below 0)
+        previous = self._first_id if id < self._first_id else id
+        self.active = self.get_node(previous)
+        return previous
+
+    def next_verse(self, id=""):
+        id = self.get_id if id == "" else id
+        id = id + 1
+        # Check verse still exists (i.e. is not above 31102)
+        next = self._last_id if id > self._last_id else id
+        self.active = self.get_node(next)
+        return next
 
     def set_verse(self, id):
         id = int(id)
@@ -515,6 +546,8 @@ if __name__ == "__main__":
     node = network.get_id_by_name("Tit.2.14")
     print(network.get_crossrefs_ids(node, 5, preprocess=True))
 
+    node = 28697
+    network.get_best_subgraph(node)
     # results = network.k_test(1500)
     # write_json(results, dump_path)
     # network.test_attributes(node)

@@ -1,4 +1,4 @@
-from dash import Dash, html, dcc, callback, ctx, Output, Input, no_update
+from dash import Dash, html, dcc, callback, ctx, Output, Input, no_update, exceptions
 import networkx as nx
 import pandas as pd
 import BibleNetwork as bn
@@ -12,11 +12,12 @@ class StyleSheet():
         self.label = 'data(label)'
         self.label_size = 12
         self.colours = {
-            'default': '#acaeb4', #grey light
+            'default': 'grey', #grey light
             'default-light': '#CFD2DB', #grey light
-            'active': '#41A3D6', # light blue
-            'hl1': '#2690D5', # blue
+            'active': '#b4d3d9', # light blue
+            'hl1': '#41A3D6', # blue
             'hl2': '#226B97', # dark blue
+            'hl3': '#6cbccc', # grey blue
             'focus': '#226B97', # blue
             'buttons': 'grey',
 
@@ -189,7 +190,10 @@ class DashController():
         return html.Span(children=children) if id == "" else html.Span(children=children, id=id)
 
     def get_a(self, children, href="", id=""):
-        return html.A(children=children, href=href) if id == "" else html.A(children=children, href=href, id=id)     
+        return html.A(children=children, href=href) if id == "" else html.A(children=children, href=href, id=id)  
+
+    def get_link(self, children, href="", id=""):
+        return dcc.Link(children, href=href, id=id)
 
     def get_input(self, id="", type="", placeholder=""):
         return dcc.Input(id=id, type=type, placeholder=placeholder, className="btn")
@@ -217,13 +221,18 @@ class DashController():
         verses = self.get_p(verses)
         return verses
     
-    def get_topheading(self, id):
-        # back = self.get_a(self.get_button(id="previous", children="◄"))
-        # forward =  self.get_a(self.get_button(id="next", children="\u25BA"))
-        back = self.get_button(id="previous", children="◄")
-        forward = self.get_button(id="next", children="\u25BA")
+    def get_url(self, id):
+        data = self.network.get_dictname(id)
+        return f"/{data["bk"].lower()}/{data["ch"]}-{data["vs"]}"
+    
+    def get_topheading(self, id, url):
+        # Get previous and next ids
+        prev, x, next = self.get_prev_next(id=id)
+        
+        # Build buttons
+        back = self.get_link(id="previous", children="◄", href=self.get_url(prev))
+        forward = self.get_link(id="next", children="\u25BA", href=self.get_url(next))
         name = self.get_span([self.network.get_fullname(id)])
-        # name = self.get_div(name, className='title')
         name = self.get_div([back, name, forward], className='title')
         verses = self.get_verse(id)
 
@@ -355,9 +364,11 @@ class DashController():
         return nodes
     
     def get_prev_next(self, id):
-        return {id - 1, id, id + 1}
+        prev = self.network.previous_verse(id=id)
+        next = self.network.next_verse(id=id)
+        return [prev, id, next]
         
-    def generate_fig(self, id, styles=""):     
+    def generate_fig(self, id, styles="", height="65vh"):     
         # build nodes and edges
         active_id = id
         
@@ -370,29 +381,36 @@ class DashController():
         fig = cyto.Cytoscape(
             id='network',
             layout={
-                    'name': 'cose-bilkent',
+                    'name': 'fcose',
                     'animate': True,
-                    # 'zoom': 10,
-                    # 'fit': False,
+                    'animationDuration': 400,
+                    'quality': 'proof',
+                    # # 'zoom': 10,
+                    'fit': True,
+                    # 'padding': 30,
+                    'idealEdgeLength': 40,
                     },
             elements=edges+nodes,
             stylesheet=styles,
-            style={'width': '100%', 'height': '400px'},
-            zoom=1,
-            maxZoom=1.3,
+            style={'width': '100%', 'height': height},
+            zoom=1.1,
+            zoomingEnabled=True,
+            maxZoom=1.2,
             minZoom=0.4,
             wheelSensitivity=0.1,
-            responsive=True,
+            pan={'x': 0, 'y': 0},
+            # responsive=True,
         )
+
         return fig
-        
+    
     def decode_search(self, search):
         search = search.strip()
         search = re.sub(r'[^(\.\w :)]', '', search) # delete specials
         search = re.sub(r'[ ]+', ' ', search) # remove double spaces
         search = search.replace(':', '.').replace(' ', '.')
         search = search.split('.', 3)
-        print(search)
+        print(f"search: {search}")
 
         if len(search) < 3 :
             return ""
@@ -407,8 +425,6 @@ class DashController():
 
         taxonomy = self.get_taxonomy()
         bk = self.get_book_by_search(bk, taxonomy)
-        print(bk, ch, vs)
-
         
         if bk == "": 
             return ""
@@ -416,17 +432,27 @@ class DashController():
         return f"{bk}.{ch}.{vs}"
 
     def get_book_by_search(self, search, taxonomy):
+        search = search.lower()
         for book, items in taxonomy.items():
             if search in items['spellings']:
                 return taxonomy[book]['short']        
 
     def get_id_by_search(self, search, current_id=""):
+        search = "" if search is None else search
         id = self.decode_search(search)
         id = self.network.get_id_by_name(id) if id != "" else "" # only do if a reference is given
         id = current_id if id == "" else id
         return id
     
-    def generate_graph(self, id):
+    def get_id_by_url(self, url):
+        "input: genesis/1-2 ----> genesis 1.2"
+        search = url.replace("/", " ").replace("-",".").strip()
+        return self.get_id_by_search(search=search)
+    
+    def generate_graph(self, id, height=""):
+        if height != "":
+            return [self.generate_fig(id=id, height=height), dcc.Tooltip(id="graph-tooltip")]              
+        
         return [self.generate_fig(id=id), dcc.Tooltip(id="graph-tooltip")]
     
     # Troubleshoot
@@ -434,7 +460,16 @@ class DashController():
     #     print(cutoff, factor)
     #     return [self.generate_fig(id=id, cutoff=cutoff, factor=factor), dcc.Tooltip(id="graph-tooltip")]
 
-
+@callback(
+    Output("url", "href"),
+    Input("button", "n_clicks")
+)
+def test(n_click):
+    if ctx.triggered_id == "button":
+        return "/genesis/3-10"
+    else:
+        raise exceptions.PreventUpdate
+    
 if __name__ == '__main__':
     network = bn.BibleNetwork()
     stylesheet = StyleSheet()
