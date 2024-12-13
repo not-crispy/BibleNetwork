@@ -9,6 +9,10 @@ external_stylesheets = [{
         'rel': 'stylesheet',
         'integrity': 'sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm',
         'crossorigin': 'anonymous'
+    },
+    {
+        'href': 'https://fonts.googleapis.com/css2?family=Farro:wght@300;400;500;700&family=Hind+Mysuru:wght@300;400;500;600;700&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=PT+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap',
+        'rel': 'stylesheet',
     }]
 app = Dash(__name__, use_pages=True, external_stylesheets=external_stylesheets, suppress_callback_exceptions=True)
 

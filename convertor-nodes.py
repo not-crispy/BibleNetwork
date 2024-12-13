@@ -6,6 +6,7 @@ from strongs import StrongsDict
 # list<tuples> where a tuple is (id, dict<name, book, chap, verse>)
 
 STRONGS_DICT = StrongsDict()
+NOT_WORDS = ["...", "", "vvv", "-", " ", ".", "..", "...."]
     
 def create_bible_dict(path):
     """
@@ -89,12 +90,19 @@ def assign_strong_greek(path, books_path):
             data["lemma"] = unpack(rows, _get_greek, _greek)
             data["translit"] = unpack(rows, _get_trans, _transliteration)
             data["eng"] = unpack(rows, _get_eng, _translation)
+
+            # If not a word, do not add
+            if data["eng"] in NOT_WORDS:
+                continue
+
+            # Check if stop word
             try:
                 data["stop_word"] = STRONGS_DICT.is_stopword(data["sn"])
             except KeyError:
                 data["stop_word"] = False
-            verse.append(data)
 
+            # Add the word
+            verse.append(data)
             count = count + 1
 
             # if count == 10:
@@ -153,14 +161,20 @@ def assign_strong_hebrew(path, books_path):
             data["translit"] = rows[_get_trans]
             data["type"] = rows[_get_type]
             data["eng"] = rows[_get_eng]
+
+            # If not a word, do not add
+            if data["eng"] in ["...", "", "vvv"]:
+                continue
+
+            # Check if a stop word
             try:
                 data["stop_word"] = STRONGS_DICT.is_stopword(data["sn"])
             except KeyError:
                 # print(data, rows[_verse])
                 data["stop_word"] = False
-            verse.append(data)
 
-            # print(f"verse: {current} sn: {data["sn"]} greek: {data["word"]} trans: {data["trans"]} eng: {data["eng"]}")
+            # Add the word
+            verse.append(data)
             count = count + 1
 
             # if count == 10:
@@ -356,14 +370,15 @@ def normalise_weights(group):
         n = (int(weight) - min + 1) / (max - min + 1)
         weight = int(n * 100)
         weight = scale(weight, max)
-        if is_significant(weight, 100):
+        # normalised.append((topic, verse, weight))    
+        if is_significant(weight, 0):
             normalised.append((topic, verse, weight))    
 
     # print(f"appending {len(normalised)} verses for {group[0][0]}")
     return normalised
 
 def is_significant(x, threshold):
-    threshold = threshold * 0.40
+    threshold = threshold * 100
     return True if x > (threshold) else False
 
 def scale (x, threshold):
@@ -466,14 +481,15 @@ if __name__ == "__main__":
     strongs_heb_write = r"strongs-hebrew.json"
     translation_path = r"strong-translation.json"
 
-    greek = assign_strong_greek(strongs_greek_path, books_csv)
-    write_json(greek, strongs_greek_write)
-    hebrew = assign_strong_hebrew(strongs_hebrew_path, books_csv)
-    write_json(hebrew, strongs_heb_write)
-    greek.update(hebrew)
-    write_json(greek, translation_path)
+    # greek = assign_strong_greek(strongs_greek_path, books_csv)
+    # write_json(greek, strongs_greek_write)
+    # hebrew = assign_strong_hebrew(strongs_hebrew_path, books_csv)
+    # write_json(hebrew, strongs_heb_write)
+    # greek.update(hebrew)
+    # write_json(greek, translation_path)
 
     # Read verses and write in graph-readable format
+    print("Writing verses...")
     verses, verse_lookup = read_verses(verses_csv, books_csv, topics_csv, translation_path)
     write_json(verses, nodes_path)
     # write_json(verse_lookup, lookup_path)

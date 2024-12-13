@@ -3,6 +3,7 @@ import networkx as nx
 import json
 from random import choice
 from cooccurence import Co_Occurence
+from statistics import mode
 from strongs import StrongsDict
 
 class BibleNetwork:
@@ -247,8 +248,8 @@ class BibleNetwork:
         return counter
 
     def get_related_topics(self, id="", k=15):
-        """Get a sorted dictionary of k related topics"""
-        subgraph = self.get_related_subgraph(id=id)
+        """Get the topics (k = max) of verses related to the given verse. Returns a sorted dictionary of topics."""
+        subgraph = self.get_best_subgraph(id=id) #
         topics = self.count_topics(subgraph)
         return {x: topics[x] for x in list(topics)[:k]}
     
@@ -335,7 +336,7 @@ class BibleNetwork:
         nodes, lengths, paths = cluster
         subgraph = self.bible.subgraph(nodes)
 
-        print(f"nodes: {nodes}\n lengths: {lengths} \n paths: {paths}")
+        # print(f"nodes: {nodes}\n lengths: {lengths} \n paths: {paths}")
 
         for key, path in paths.items():
             if shortest_path:
@@ -396,14 +397,17 @@ class BibleNetwork:
         # Remove any very small subgraphs if a larger one exists
         for pair, G in graphs.items():
             if max_nodes > 3 and len(G) < 3:
-                print(pair, G)      
                 centrality.pop(pair) 
-                print(centrality)     
 
         # A lower degree approximates a lower serendipity (i.e. more optimal)
-        top_graph = sorted(centrality.items(), key=lambda x: x[1]['betweens'])[0][0]
-        # top_graph = sorted(centrality.items(), key=lambda x: x[1]['degree'])[0][0]
-        print(f"selecting... factor: {top_graph[0]} cutoff: {top_graph[1]}")     
+        # print(f"centrality of {id}:\n{centrality}")
+        top1 = sorted(centrality.items(), key=lambda x: x[1]['betweens'])[0][0]
+        top2 = sorted(centrality.items(), key=lambda x: x[1]['degree'])[0][0]
+        top3 = sorted(centrality.items(), key=lambda x: x[1]['closeness'])[0][0]
+        top_graph = mode([top1, top2, top3])
+        # print(f"top_graphs: {[top1, top2, top3]} mode: {top_graph}")
+
+        print(f"selecting... factor: {top_graph[0]} cutoff: {top_graph[1]} options: {top1, top2, top3}")     
         return graphs[top_graph]
 
     def previous_verse(self, id=""):
@@ -621,11 +625,32 @@ if __name__ == "__main__":
     print(f"Your current verse is:\n{network.get_node(node)}")
     print(network.get_strongs(node))
     cooccurence = network.get_cooccurence(node)
+
+    node = 24230
+    print(f"Your current verse is:\n{network.get_node(node)}")
+    print(network.get_best_subgraph(node))
+
     for node in nodes:
+        subgraph_nodes = network.get_best_subgraph(node).nodes
         print(f"\n{network.get_name(node)}")
         print(f"{network.get_verse(node)}")
-        cooccurence = network.get_cooccurence([node, node-1, node+1])
+        # print(f"\nGet topics")
+        # print(f"{network.get_topics(node)}")
+        # print("\nGet related topics")
+        # print(f"{network.get_related_topics(node)}")
+        # print("\nGet topic count")
+        # print(f"{network.count_topics(G=network.get_best_subgraph(node), weighted=False)}\n")
+
+        cooccurence = network.get_cooccurence(subgraph_nodes)
         cooccurence.print_report(k=5)
+
+
+
+    # for node in nodes:
+    #     print(f"\n{network.get_name(node)}")
+    #     print(f"{network.get_verse(node)}")
+    #     cooccurence = network.get_cooccurence([node, node-1, node+1])
+    #     cooccurence.print_report(k=5)
     # cooccurence = network.get_cooccurence([node, node-1, node+1])
     # print(cooccurence.get_centrality_measures())
     # print(network.get_cooccurence(node))

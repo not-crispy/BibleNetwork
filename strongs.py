@@ -63,7 +63,7 @@ from nltk.tokenize import word_tokenize
 
 # nltk.download('punkt_tab')
 STOPWORDS_ENGLISH = ['i', 'me', 'my', 'myself', 'we', 'our', 'ours', 
-'ourselves', 'you', "you're", "you've", "you'll", "you'd", 'your', 'yours', 'yourself', 
+'ourselves', 'you', 'thou', "you're", "you've", "you'll", "you'd", 'your', 'yours', 'yourself', 
 'yourselves', 'he', 'him', 'his', 'himself', 'she', "she's", 'her', 'hers', 'herself', 
 'it', "it's", 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves',
  'what', 'which', 'who', 'whom', 'this', 'that', "that'll", 'these', 'those', 'am', 'is', 'are',
@@ -78,9 +78,10 @@ STOPWORDS_ENGLISH = ['i', 'me', 'my', 'myself', 'we', 'our', 'ours',
  "mightn't", 'mustn', "mustn't", 'needn', "needn't", 'shan', "shan't", 'shouldn', "shouldn't", 
 'wasn', "wasn't", 'weren', "weren't", 'won', "won't", 'wouldn', "wouldn't",
 "and", "also", "both", "but", "even", "for", "if", "or", "so", "that", "then", "therefore", "when", "yet",
-"have", "hold", "as", "like", "when", "while", "since", "become", "some", "etc", "cause", "do", "happen", "have",]
+"have", "hold", "as", "like", "when", "while", "since", "become", "some", "etc", "cause", "do", "happen", "have",
+"again", "alike", "also", "but", "either", "even", "for", "all", "likewise", "moreover", "nay", "neither", "though", "yea"]
 EXTRA_STOPS = ['against', 'between', 'during', 'before', 'after', 'above', 'below', 'up', 'down', 'over', 'under', 'further',]
-STOP_LINGUISTICS = ['preposition', 'article', 'conjunction', "prep", "conj", "inrg"]
+STOP_LINGUISTICS = ['preposition', 'article', 'conjunction', "prep", "conj", "inrg", "pronoun"]
 class StrongsDict():
     def __init__(self):
         self.strongs_path = r"strongs-dictionary.json"
@@ -126,7 +127,7 @@ class StrongsDict():
     
     def is_stopword(self, id):
         """Checks whether a strong value is a (probable) stop word.""" 
-        words = self.get_words(id).replace(" ", "`")
+        words = self.get_words(id).replace(" ", "`").replace("...", ",")
         words = re.sub(r"\(.+?\)", '', words) # replace any "( ... )", as this extra information will confuse the stop-checker
         words = re.sub(r"\[.+?\]", '', words) # replace any "[ ... ]"
         stop_words = set(STOPWORDS_ENGLISH)
@@ -161,7 +162,7 @@ if __name__ == "__main__":#
     id5 = "G2192"
     id6 = "H9009"
     id7 = "H4480"
-    id8 = "H853"
+    id8 = "H1571"
     list_of_ids = [ids, id2, id3, id4, id5, id6, id7, id8]
     # list_of_ids = dictionary.get_random_ids(30)
     for id in list_of_ids:
