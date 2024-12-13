@@ -2,6 +2,12 @@
 old/
 sample.py
 
+# These files are too large and are stored on a Google Drive instead
+strongs-hebrew.json
+strongs_open_hebrew_bible.csv
+nodes.json
+strong-translation.json
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
