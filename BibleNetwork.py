@@ -2,11 +2,14 @@
 import networkx as nx
 import json
 from random import choice
+from cooccurence import Co_Occurence
+from strongs import StrongsDict
 
 class BibleNetwork:
     """A network of the bible where verses are nodes."""
     def __init__(self):
         self.bible = nx.DiGraph()
+        self.strongs_dict = StrongsDict()
         self.nodes_path = r"nodes.json"
         self.crossrefs_path = [r"edges.json", r"edges2.json"]
 
@@ -47,7 +50,7 @@ class BibleNetwork:
             edges.append(self.bible.edges[x,y])
             count += 1 
 
-        return edges 
+        return edges
 
     def get_path_passages(self, path):
         """Get the passages of the given path."""
@@ -156,8 +159,28 @@ class BibleNetwork:
         end = id if id == self._last_id else id + 1
 
         return self.get_passage(start, end, active=id)
+    
+    def get_strongs(self, id="", no_stopwords=False):
+        """Return verse in original language, including Strongs numbers, Greek/Hebrew, transliteration and English translation."""
+        id = self.get_id() if id == "" else id
+        verse = []
+        verse_eng = []
+        verse_trans = []
+        strongs = []
+        for word in self.get_node(id)['strongs']:
+            if no_stopwords and word['stop_word']:
+                continue # do not include stop words
+            else:
+                x = word['lemma']
+                verse.append(x)
+                verse_eng.append(word['eng'])
+                verse_trans.append(word['translit'])
+                strongs.append(word['sn'])
+
+        return {"strongs": strongs, "lemma": verse, "translit": verse_trans, "english": verse_eng}
 
     def get_node(self, id):
+        """Returns the node data of a given id"""
         return self.bible.nodes(data=True)[id]
     
     def get_crossrefs(self, id=""):
@@ -237,6 +260,9 @@ class BibleNetwork:
         return self.get_related_subgraph(factor, id)
     
     def get_shortest_path(self, source, target, graph=None):
+        """Returns the shortest path between source and target of a given subgraph (default: all the bible)
+        
+        Return: The form of [distance, [source_id, ..., target_id]]"""
         if graph is None:
             graph = self.bible
 
@@ -264,15 +290,22 @@ class BibleNetwork:
         crossrefs.add(id)
         return self.get_related_subgraph(id=crossrefs, active=id, factor=factor)
     
-    def get_related_subgraph(self, id="", active="", factor=0.4):
+    def get_path_related_subgraph(self, id1="", id2=""):
+        ids = self.get_shortest_path(source=id1, target=id2)[1]
+        return self.get_related_subgraph(id=ids, active=id1, shortest_path=ids)
+    
+    def get_related_subgraph(self, id="", active="", factor=0.4, shortest_path=None):
         """Get subgraph of verses that are closely "related" to one another. Returns a subgraph G.
-        
+        s
         factor -- A larger factor means a bigger subgraph."""
 
         # Initialise
         id = self.get_id() if id == "" else id
         active = id if active == "" else active
-        id = id if type(id) is set else {id} # must be in form {1} or {1,45,33231}
+
+        # Parse data
+        id = {id} if type(id) is int else set(id)
+        # active = {active} if type(active) is int else set(active)
         nodes = self._get_cluster(factor, id)[0]
         count = 0
         count_k = 0
@@ -295,17 +328,47 @@ class BibleNetwork:
 
         # Get subgraph
         cluster = self._get_cluster(factor, id)
-        return self._convert_cluster_to_subgraph(cluster, active)
+        return self._convert_cluster_to_subgraph(cluster, active, shortest_path=shortest_path)
     
-    def _convert_cluster_to_subgraph(self, cluster, active, get_attribs=True):
+    def _convert_cluster_to_subgraph(self, cluster, active, get_attribs=True, shortest_path=None):
         """Convert cluster into subgraph. If attribs = True, add extra attributes to each node."""
         nodes, lengths, paths = cluster
         subgraph = self.bible.subgraph(nodes)
 
+        print(f"nodes: {nodes}\n lengths: {lengths} \n paths: {paths}")
+
         for key, path in paths.items():
-            if path[0] is not active:
+            if shortest_path:
+                # Find a path between current node and active node (either n1 or n2)
+                node = path[0]
+                k = shortest_path.index(node)
+
+                # Is n1 or n2 shorter? 
+                n1, n2 = shortest_path[:k], shortest_path[k+1:]
+                path = n1 + path
+
+                #### ABOVE CODE DRAWS PATH FROM NODE: n1
+
+                #### THE BELOW CODE ATTEMPTS TO DRAW THE SHORTEST PATH
+                #### BUT DOES NOT WORK FOR ALL NODES -- i.e. sometimes an edge used in short_path is not yet added to the graph
+                #### POSSIBLE SOLUTION: ENFORCE EDGES IN BOTH DIRECTIONS
+                # if len(n1) < len(n2):
+                #     print("left")
+                #     if len(path) != 1:
+                #         print("BANG!")
+                #     path = n1 + path # if len(path) == 1 else n1 + path[::-1]
+                # else: 
+                #     print("right")
+                #     if len(path) != 1:
+                #         print("BANG!")
+                #     path = path[::-1] + n2 if len(path) == 1 else n1 + path # n2[::-1] + path
+                # path = n1 + path if len(n1) < len(n2) else path[::-1] + n2 # This is the shorter path
+
+            elif path[0] is not active:
                 path.insert(0, active)
             paths[key] = path 
+
+        # print(f"Paths {paths}")
 
         if get_attribs:
             pos = nx.spring_layout(subgraph)
@@ -505,6 +568,23 @@ class BibleNetwork:
 
         print(data)
         return sorted(data.items(), key=lambda x: x[1]['degree'])
+    
+    def get_cooccurence(self, ids=[]):
+        """Get the co_occurence graph of a given id, or given ids."""
+        # Initialise
+        ids = self.get_id if ids == [] else ids
+        ids = [ids] if type(ids) is int else ids
+        builder = None
+
+        # Create co_occurence of all given ids
+        for id in ids:
+            verse = self.get_strongs(id, no_stopwords=True)
+            strongs = verse["strongs"]
+            attrs = verse["english"]
+            cooccurence = Co_Occurence(strongs, nodes_attrs=attrs, label=self.get_name(id))
+            builder = builder.merge(cooccurence) if builder else cooccurence
+
+        return builder
 
 def write(data, path):
     """Write data_structure to given path"""
@@ -531,23 +611,37 @@ if __name__ == "__main__":
     # 12354 - Nehemiah 3:27
     network = BibleNetwork()
     # nodes = [0, 1, 2, 3, 4, 5, 6, 29480]
-    # nodes = [23949, 0, 1, 22151, 27169, 12354]
+    nodes = [23949, 1, 22151, 27169, 12354]
     # nodes = [x for x in range(0, 31100, 1780)]
     # nodes = [28375, 5842, 27169]
 
     # low 
     node = 24332
+    node2 = 24335
     print(f"Your current verse is:\n{network.get_node(node)}")
-    print(network.get_crossrefs_ids(node, 5, True))
-    print(network.get_best_subgraph(node))
-    path = network.get_shortest_path(1, 10000)[1]
-    print(network.get_passage(1, 3, 2))
+    print(network.get_strongs(node))
+    cooccurence = network.get_cooccurence(node)
+    for node in nodes:
+        print(f"\n{network.get_name(node)}")
+        print(f"{network.get_verse(node)}")
+        cooccurence = network.get_cooccurence([node, node-1, node+1])
+        cooccurence.print_report(k=5)
+    # cooccurence = network.get_cooccurence([node, node-1, node+1])
+    # print(cooccurence.get_centrality_measures())
+    # print(network.get_cooccurence(node))
+    # print(network.get_crossrefs_ids(node, 5, True))
+    # print(network.get_best_subgraph(node))
+    # print(network.get_shortest_path(node, node2))
+    # print("EGT PATH SUBGRAPH")
+    # graph = network.get_path_related_subgraph(node, node2)
+    # print(network.get_path_related_subgraph(node2, node))
+    # print(network.get_passage(1, 3, 2))
     
-    node = network.get_id_by_name("Tit.2.14")
-    print(network.get_crossrefs_ids(node, 5, preprocess=True))
+    # node = network.get_id_by_name("Matthew.3.4")
+    # print(network.get_crossrefs_ids(node, 5, preprocess=True))
 
-    node = 28697
-    network.get_best_subgraph(node)
+    # node = 28697
+    # network.get_best_subgraph(node)
     # results = network.k_test(1500)
     # write_json(results, dump_path)
     # network.test_attributes(node)

@@ -24,12 +24,12 @@ lower = [html.Div(className='mx-3', children=[
         ])
     ]),]
 
+page = BUILDER.get_page_name("default")
 
-network = lower
+network = page + lower
 
 register_page("index", path='/', layout=network)
 register_page("network", path_template='/<book>/<chapter>-<verse>', layout=network)
-
 
 @callback(
         Output('inputs', 'children'),
@@ -42,46 +42,46 @@ def get_inputs(troubleshoot=False):
     return [search, troubleshoots] if troubleshoot else [search]
 
 
-@callback(
-    Output('main-verse', 'children'),
-    Output('crossrefs', 'children'),
-    Output('graph', 'children'),
-    Output('themes', 'children'),
-    Output('id-store', 'data'),
-    Output('url', 'pathname'),
-    Output('search', 'value'),
-    Input('search', 'value'),
-    Input('id-store', 'data'),
-    Input('url', 'pathname'),
-    Input("breakpoints", "widthBreakpoint"),
-)
-def update_verse(search, id, url, bp):
+# @callback(
+#     Output('main-verse', 'children'),
+#     Output('crossrefs', 'children'),
+#     Output('graph', 'children'),
+#     Output('themes', 'children'),
+#     Output('id-store', 'data'),
+#     Output('url', 'pathname'),
+#     Output('search', 'value'),
+#     Input('search', 'value'),
+#     Input('id-store', 'data'),
+#     Input('url', 'pathname'),
+#     Input("breakpoints", "widthBreakpoint"),
+# )
+# def update_verse(search, id, url, bp):
 
-    # initialise
-    trigger = ctx.triggered_id
-    print(f"Your trigger: {trigger} Your url is: {url} Your id is: {id}")
+#     # initialise
+#     trigger = ctx.triggered_id
+#     print(f"Your trigger: {trigger} Your url is: {url} Your id is: {id}")
 
-    if url is not None:
-        id = BUILDER.get_id_by_url(url)
+#     if url is not None:
+#         id = BUILDER.get_id_by_url(url)
 
-    id = NETWORK.get_random_id() if id == '' else id
+#     id = NETWORK.get_random_id() if id == '' else id
 
-    print(f"updating verse...{NETWORK.get_fullname(id)}")
+#     print(f"updating verse...{NETWORK.get_fullname(id)}")
 
-    if trigger == 'search':
-        print(f"searching for... {search}")
-        id = BUILDER.get_id_by_search(search, id)
-    elif trigger == 'url':
-        search = ''
+#     if trigger == 'search':
+#         print(f"searching for... {search}")
+#         id = BUILDER.get_id_by_search(search, id)
+#     elif trigger == 'url':
+#         search = ''
 
-    # update verse and its associates
-    verse = BUILDER.get_topheading(id, url)
-    crossrefs = BUILDER.get_crossrefs(id)
-    graph = BUILDER.generate_graph(id)
-    themes = BUILDER.get_themes(id)
-    url = BUILDER.get_url(id)
+#     # update verse and its associates
+#     verse = BUILDER.get_topheading(id)
+#     crossrefs = BUILDER.get_crossrefs(id)
+#     graph = BUILDER.generate_graph(id)
+#     themes = BUILDER.get_themes(id)
+#     url = BUILDER.get_url(id)
 
-    return verse, crossrefs, graph, themes, id, url, search
+#     return verse, crossrefs, graph, themes, id, url, search
 
 @callback(
     Input('network', 'mouseoverNodeData'),
@@ -138,7 +138,9 @@ def update_styles(nodeData, clicked, theme, window_width):
             'display': 'block',
         }
 
-        return BUILDER.get_betweens(data), stylesheet, None, BUILDER.get_betweens(data), info_styles
+        betweens = BUILDER.get_betweens(data)
+
+        return betweens, stylesheet, None, betweens, info_styles
     
     if trigger == 'themes':
         # Highlight themes

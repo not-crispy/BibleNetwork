@@ -221,11 +221,19 @@ class DashController():
         verses = self.get_p(verses)
         return verses
     
-    def get_url(self, id):
+    def _get_url(self, id):
+        """Converts verse into url in the form /bk/ch-vs"""
         data = self.network.get_dictname(id)
         return f"/{data["bk"].lower()}/{data["ch"]}-{data["vs"]}"
     
-    def get_topheading(self, id, url):
+    def get_url(self, id1, id2="", page="default"):
+        """For a given "page", gets the URL that corresponds to that page."""
+        if page == "link":
+           return f"/link{self._get_url(id1)}{self._get_url(id2)}"
+
+        return self._get_url(id1)
+    
+    def get_topheading(self, id):
         # Get previous and next ids
         prev, x, next = self.get_prev_next(id=id)
         
@@ -341,7 +349,7 @@ class DashController():
         ]
         return edges
     
-    def generate_nodes(self, G, active_id):
+    def generate_nodes(self, G, active_ids):
         # initialise
         network = self.network
         factor = 200
@@ -350,7 +358,7 @@ class DashController():
         nodes = [
             {
                 'data': {'id': str(id), 'label': data['name'], 'fullname': network.get_fullname(id), 'verse': data['content'], 'path': data['path'],
-                        'active': 'active' if id == active_id else 'inactive', 'theme': network.get_topics(id)
+                        'active': 'active' if id in active_ids else 'inactive', 'theme': network.get_topics(id)
                         }, 
                 'selectable': True,
                 'fit': False,
@@ -367,13 +375,21 @@ class DashController():
         prev = self.network.previous_verse(id=id)
         next = self.network.next_verse(id=id)
         return [prev, id, next]
+    
+    def get_page_name(self, name):
+        return [dcc.Store(id='page_name', data=name)]
+    
+    def graph(self, id, id2=None, mode='default'):
+        if id2:
+            return self.network.get_path_related_subgraph(id1=id, id2=id2)
         
-    def generate_fig(self, id, styles="", height="65vh"):     
+        return self.network.get_best_subgraph(id=id)
+        
+    def generate_fig(self, id, height, id2=None, styles=""):     
         # build nodes and edges
-        active_id = id
-        
-        G = self.network.get_best_subgraph(id=id)
-        nodes = self.generate_nodes(G, active_id)
+        active_ids = [id, id2]
+        G = self.graph(id=id, id2=id2)
+        nodes = self.generate_nodes(G, active_ids)
         edges = self.generate_edges(G)
         styles = self.default_stylesheet if styles == "" else styles
 
@@ -401,7 +417,7 @@ class DashController():
             pan={'x': 0, 'y': 0},
             # responsive=True,
         )
-
+    
         return fig
     
     def decode_search(self, search):
@@ -444,16 +460,32 @@ class DashController():
         id = current_id if id == "" else id
         return id
     
-    def get_id_by_url(self, url):
+    def _get_id_by_url(self, url):
         "input: genesis/1-2 ----> genesis 1.2"
         search = url.replace("/", " ").replace("-",".").strip()
         return self.get_id_by_search(search=search)
     
-    def generate_graph(self, id, height=""):
-        if height != "":
-            return [self.generate_fig(id=id, height=height), dcc.Tooltip(id="graph-tooltip")]              
+    def get_id_by_url(self, url, page="default"):
+        "Parse the url based on the given page."
+        id1, id2 = ["", ""]
+        x = url.split("/")
+
+        if page == "link":
+            url1, url2 = [f"{x[2]}/{x[3]}", f"{x[4]}/{x[5]}"]
+            id1 = self._get_id_by_url(url1)
+            id2 = self._get_id_by_url(url2)
+            print(f"items {url1}, {url2}, {id1}, {id2}")
+            
+        else:
+            id1 = self._get_id_by_url(url)
+
+        return [id1, id2]
+    
+    def generate_graph(self, id, id2=None, height="65vh"):
+        if id2:
+            return [self.generate_fig(id=id, id2=id2, height=height)]              
         
-        return [self.generate_fig(id=id), dcc.Tooltip(id="graph-tooltip")]
+        return [self.generate_fig(id=id, height=height)]
     
     # Troubleshoot
     # def generate_graph(self, id, cutoff, factor):
