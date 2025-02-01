@@ -39,7 +39,7 @@ graph = [
 ]
 
 header = [
-    dcc.Location(id='url', refresh="callback-nav"),
+    dcc.Location(id='url', refresh=False),
     dcc.Store(id='id-store', data=''),
     dcc.Store(id='id-store2', data=''),
     WindowBreakpoints(

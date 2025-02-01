@@ -5,8 +5,20 @@ from strongs import StrongsDict
 # Convert verses.csv into a readable data structure
 # list<tuples> where a tuple is (id, dict<name, book, chap, verse>)
 
+def get_topic_dict():
+    """ Return JSON dictionary for topics"""
+    return read_json("topic_dict.json")
+
+def read_json(path):
+        """Reads json and returns it"""
+        with open(path, 'r') as config_file:
+            data_loaded = json.load(config_file)
+        
+        return data_loaded
+
 STRONGS_DICT = StrongsDict()
 NOT_WORDS = ["...", "", "vvv", "-", " ", ".", "..", "...."]
+TOPIC_DICT = get_topic_dict()
     
 def create_bible_dict(path):
     """
@@ -302,11 +314,176 @@ def assign_strong_to_esv(path):
     #     if count == 10:
     #         break
 
-def assign_topics(path): 
-    """
-    Reads topics.csv and assigns topic-weight pair to verses dictionary.
-    """
-    topic_dict = {}
+def create_similar_topics_dict(all_topics):
+    """Identify similar topics and group them."""
+    topics_dict = {}
+    SMALL_WORDS_TO_KEEP = ["word"]
+    TOPICS_TO_KEEP = ["kingdom of god", "promised land", "speaking in tongues", "holy spirit", "the spirit of", "holy ghost", "gods word", "the word"
+                      "seeking gods will", "seeking knowledge", "spiritual leader", "the word"]
+    TOPICS_TO_DELETE = ["tests", "bethany", "others", "moving", "people", "spirit", "ghost", "stubborn women", "revel", "yourself", "family", "loving", "giving", "stand"]
+    SUBTOPICS_TO_DELETE = {"black": ["black magic"], "rejoicing": ["rejoicing in the truth"],
+                           "tongue": ["speaking in tongues", "talking in tongues", "speaking in tongue jesus", "the gift of tongues"],
+                           "the spirit": ["the spirit of rejection", "the spirit of religion", "the spirit of pride", "the spirit of man", "the spirit of witchcraft", "the spirit of"],
+                           "seeking": ["seeking wisdom", "seeking knowledge", "seeking gods will", "seeking revenge", "self seeking"],
+                           }
+    TOPICS_TO_RENAME = {"black": "black (skin colour)", "confess": "confessing sin", "theory": "scientific theories", "living": "godly living",
+                        "overcoming": "overcoming temptation / sin", "world": "the world", "forsake": "leaving / forsaking", "the spirit": "in the spirit", "the spirit of": "spiritual evils",
+                        "holy ghost": "holy spirit", "tattoo": "tattoos", "word": "our words", "seeking": "seeking god", "gods will": "knowing gods will",
+                        "the word": "gods word", "humble": "humility", "forgive": "forgiveness", "rude": "rudeness", "being rude": "rudeness", "loving each other": "loving others", "offering": "tithing", "tithe": "tithing",
+                        "spiritual": "life in the spirit", "understanding": "knowledge", "knowledge": "knowledge / understanding", "selfless": "selflessness",
+                        "special": "being special", "relationship": "relationships"}
+    # "tattoo": "tattoos",  #"the word": "gods word", 
+    SUBTOPICS_TO_ADD = {"selfish": ["self seeking"], "humility": ["humble"], "kindness": ["kind"], "love": ["loving"], 
+                        "generosity": ["giving", "giving to others", "gift giving", "giving money"], 
+                        "giving to the poor": ["giving to others in need", "giving to the needy"],
+                        "tithing": ["giving money to the church", "giving 10 percent", "giving to your pastor"],
+                        "gods word": ["word of god",  "gods word"], "confessing sins": ["confession of sin"]} 
+    SUBTOPICS_TO_SUBTRACT = {"our words": "gods word", }
+
+    # Find subtopics and group them under parents
+    for topic in all_topics:
+        for x in all_topics:
+
+            contains_topic = (f"{topic} " in x) or (f" {topic}" in x) or (f"{topic}ity" in x) or (f"{topic}s" in x) or (f"{topic}ing" in x) or (f"{topic}ship" in x) or (f"{topic}ness" in x)
+
+            if contains_topic and topic is not x and (len(topic) > 4 or topic in SMALL_WORDS_TO_KEEP):
+                if topic in topics_dict:
+                    topics_dict[topic].append(x)
+                else: 
+                    topics_dict[topic] = [x]
+
+    # Remove any unhelpful / vague parent topics
+
+    for topic in TOPICS_TO_DELETE:
+        topics_dict.pop(topic, None)
+        print(f"deleting {topic}") 
+
+    # Remove any children that are also parents
+    x = dict(topics_dict)
+    for topic, subtopics in x.items():
+        for key in x.keys():
+            if topic in key and topic is not key:
+                if key in TOPICS_TO_KEEP: # ignore it
+                    continue
+                topics_dict.pop(key, None)
+                print(f"{key} ---> {topic}")
+             
+    
+    print("\nDELETING")
+    # Remove subtopics
+    for topic, subtopics in SUBTOPICS_TO_DELETE.items():
+        for subtopic in subtopics:
+            topics_dict[topic].remove(subtopic)
+            print(f"{subtopic} from {topic}")
+
+    # Rename topics
+    print("\nRENAMING")
+    for topic in TOPICS_TO_RENAME:
+        new_name = TOPICS_TO_RENAME[topic]
+
+        # If topic to rename does not exist
+        if topic not in topics_dict:
+            topics_dict[topic] = []
+
+        # If new name already exists, merge
+        if new_name in topics_dict:
+            topics_dict[new_name] = topics_dict[topic] + topics_dict[new_name] + [topic]
+        else:
+            topics_dict[new_name] = topics_dict[topic] + [topic]
+        
+        topics_dict.pop(topic)         
+        print(f"{topic} ---> {new_name}")
+
+    print("\nADDING")
+    for topic, add_subtopics in SUBTOPICS_TO_ADD.items():
+        for subtopic in add_subtopics:
+            if topic in topics_dict:
+                topics_dict[topic].append(subtopic)
+            else:
+                topics_dict[topic] = [subtopic]
+            print(f"{topic} += {subtopic}")
+
+    print("\nSUBTRACTING")
+    for topic, minus_topic in SUBTOPICS_TO_SUBTRACT.items():
+        x =  list(set(topics_dict[topic]) - set(topics_dict[minus_topic]))
+        topics_dict[topic] = x
+        print(f"{topic} no longer contains {minus_topic}")
+        print(topics_dict[topic])
+
+    print("\n")
+    write_json(topics_dict, "all_topics_dict.json")
+    
+
+def flip_dict(index):
+    inverse = {}
+    for k,v in index.items():
+        for x in v:
+            inverse.setdefault(x, []).append(k)
+    
+    return inverse
+
+def write_topic_dict():
+    """Build and write a topic_dict to json files."""
+    create_similar_topics_dict(read_json("all_topics.json"))
+    all_topics = read_json("all_topics_dict.json")
+    write_json(flip_dict(all_topics), "topic_dict.json")
+
+def sophisticated_topics(path):
+    """Iterate over every topic and group similar topics. Then normalise."""
+    builder = {}
+    topics = []
+    count = 0
+
+     # Preprocess topics.csv
+    with open(path, encoding='utf-8') as csvt:
+        csvReader = csv.DictReader(csvt)
+        for rows in csvReader:
+            # Retreive topic data
+            topic = rows['Topic']
+            verse = rows['Verse'].split('-')[0]
+            weight = rows['Votes']
+
+            topic_og = topic
+
+            # Combine similar topics
+            if topic in TOPIC_DICT:
+                topic = TOPIC_DICT[topic][0]
+
+            if topic == "being rude": 
+                print(f"{topic} !! dict: {TOPIC_DICT[topic]} data: {verse}, {weight}")
+
+
+            weight = int(weight)
+            
+            # Add to builder
+            if topic not in builder:
+                builder[topic] = {verse: weight}
+            elif verse not in builder[topic]:
+                builder[topic][verse] = weight
+            else:
+                # print(f"Duplicate! {topic_og} ---> {topic} with {verse, weight}")
+                builder[topic][verse] += weight 
+
+            # if count > 350:
+            #     break
+
+            count = count + 1
+
+    for topic, verses in builder.items():
+        # Reformat topic data
+        values = []
+        for verse in verses:
+            weight = verses[verse]
+            values.append((topic, verse, weight))
+
+        # Normalise topic data
+        values = normalise_weights(values)
+        topics.append(values)
+                         
+    return topics
+
+def read_topics(path):
+    """Lazily iterate over every topic and normalise. Cannot handle similar topic groups."""
     topics = []
     group = []
     previous = None
@@ -333,8 +510,18 @@ def assign_topics(path):
             previous = topic
             count += 1
 
-            # if count > 130: 
-            #     break
+            if count > 330: 
+                return topics
+
+    return topics
+
+def assign_topics(path): 
+    """
+    Reads topics.csv and assigns topic-weight pair to verses dictionary.
+    """
+    # topics = read_topics(path)
+    topics = sophisticated_topics(path)
+    topic_dict = {}
 
    # Once preprocessed, assign topics to verses
     for t in topics:
@@ -437,7 +624,7 @@ def read_verses(verses_path, books_path, topics_path, strongs_path):
             data["version"] = "ESV"
             data["id"] = id
             data["topics"] = topics[data['name']] if data['name'] in topics else [] # if verse has topics, assign topics
-            data["strongs"] = strongs[data['name']] if data['name'] in strongs else [] #if verse has strongs, assign strongs
+            # data["strongs"] = strongs[data['name']] if data['name'] in strongs else [] #if verse has strongs, assign strongs
 
             # Create verse node
             verse = (id, data)
@@ -458,13 +645,31 @@ def write_json(data, path):
 
     print(f"Successfully written verses to {path}")
 
-def read_json(path):
-        """Reads json and returns it"""
-        with open(path, 'r') as config_file:
-            data_loaded = json.load(config_file)
-        
-        return data_loaded
-    
+
+def write_nodes(data, path):
+    """Write list of nodes to nodes.json"""
+
+    x = int( len(data) / 2 )
+    data1 = data[:x]
+    data2 = data[x:]
+
+    x = int( len(data2) / 2)
+    data3 = data2[:x]
+    data4 = data2[x:]
+
+    x = int( len(data4) / 2)
+    data5 = data4[:x]
+    data6 = data4[x:]
+
+    data = [data1, data3, data5, data6]
+    xpath, x = path.split(".")
+
+    # Write all files in form data1.json, data2.json, etc
+    for i, data in enumerate(data):
+        path = f"{xpath}{i + 1}.json"
+        with open(path, 'w', encoding='utf-8') as jsonf:
+            jsonf.write(json.dumps(data, indent=4))
+            print(f"Successfully written nodes to {path}")
 
 if __name__ == "__main__":
     verses_csv = r'bible-esv.csv'
@@ -489,7 +694,11 @@ if __name__ == "__main__":
     # write_json(greek, translation_path)
 
     # Read verses and write in graph-readable format
+
+    print("Writing topics...")
+    write_topic_dict()
+
     print("Writing verses...")
     verses, verse_lookup = read_verses(verses_csv, books_csv, topics_csv, translation_path)
-    write_json(verses, nodes_path)
+    write_nodes(verses, nodes_path)
     # write_json(verse_lookup, lookup_path)

@@ -6,6 +6,8 @@ import dash_cytoscape as cyto
 import json
 import re
 
+def get_page_name(name):
+    return [dcc.Store(id='page_name', data=name)]
 class StyleSheet():
     """Utility to build stylesheets"""
     def __init__(self):
@@ -224,7 +226,7 @@ class DashController():
     def _get_url(self, id):
         """Converts verse into url in the form /bk/ch-vs"""
         data = self.network.get_dictname(id)
-        return f"/{data["bk"].lower()}/{data["ch"]}-{data["vs"]}"
+        return f"/{data['bk'].lower()}/{data['ch']}-{data['vs']}"
     
     def get_url(self, id1, id2="", page="default"):
         """For a given "page", gets the URL that corresponds to that page."""
@@ -342,6 +344,53 @@ class DashController():
 
         return children
     
+    def get_column_left(self):
+        """Returns the information for the left column for a page with a graph."""
+        template = self.get_temp_selected_verse()+self.get_temp_crossrefs()
+        c_left = [html.Div(className='pt-1 col-6 sm-col-1', style={'min-width': '250px'}, children=template),]
+        return c_left
+    
+    def get_temp_crossrefs(self):
+        """Returns the base template for crossrefs."""
+        return [
+           html.H6(children="Cross References"),
+            html.Div(id='crossrefs', children=[html.P()]),
+        ]
+    
+    def get_temp_selected_verse(self):
+        """Returns the base template for selected verse."""
+        return [
+            html.H6(children="Selected Verse"),
+            html.Div(id='betweens', children=[html.P()]),
+        ]
+    
+    def get_temp_themes(self):
+        """Returns the base template for themes."""
+        return [
+            html.H6(children="Themes"),
+            dcc.Tabs(id='themes', children=[html.P()], style={'display': 'inline-block', 'max-width': '500px'}),
+        ]
+    
+    def get_column_right(self):
+        """Returns the information for the right column for a page with a graph."""
+        template = self.get_temp_themes()
+        c_right = [html.Div(className='pt-1 col-6 sm-col-1', style={'min-width': '250px'}, children=template)]
+        return c_right    
+
+    
+    def get_lower(self):
+        """Returns the lower information of a page with a graph."""
+        lower = [html.Div(className='mx-3', children=[
+            html.Div(className='row', children=self.get_column_left()+self.get_column_right())
+        ]),]
+        
+        return lower
+    
+    def get_about(self):
+        """Returns information about the project."""
+        html.H6(children="Cross References"),
+        html.Div(id='crossrefs', children=[html.P(children="lorem ipsum")]),
+    
     def generate_edges(self, G):
         edges = [
             {'data': {'source': str(source), 'target': str(target), 'id': f"{source}-{target}"}}
@@ -376,11 +425,8 @@ class DashController():
         next = self.network.next_verse(id=id)
         return [prev, id, next]
     
-    def get_page_name(self, name):
-        return [dcc.Store(id='page_name', data=name)]
-    
     def graph(self, id, id2=None, mode='default'):
-        if id2:
+        if id2 or id2 == 0:
             return self.network.get_path_related_subgraph(id1=id, id2=id2)
         
         return self.network.get_best_subgraph(id=id)
@@ -425,6 +471,7 @@ class DashController():
         search = re.sub(r'[^(\.\w :)]', '', search) # delete specials
         search = re.sub(r'[ ]+', ' ', search) # remove double spaces
         search = search.replace(':', '.').replace(' ', '.')
+        search = search.replace('1 ', '1').replace('2 ', '2').replace('3 ', '3') # parse 1 corinthians etc
         search = search.split('.', 3)
         print(f"search: {search}")
 
@@ -471,7 +518,8 @@ class DashController():
         x = url.split("/")
 
         if page == "link":
-            url1, url2 = [f"{x[2]}/{x[3]}", f"{x[4]}/{x[5]}"]
+            x = url.replace("/link", "").split("/")
+            url1, url2 = [f"{x[1]}/{x[2]}", f"{x[3]}/{x[4]}"]
             id1 = self._get_id_by_url(url1)
             id2 = self._get_id_by_url(url2)
             print(f"items {url1}, {url2}, {id1}, {id2}")
@@ -482,7 +530,8 @@ class DashController():
         return [id1, id2]
     
     def generate_graph(self, id, id2=None, height="65vh"):
-        if id2:
+        if id2 or id2 == 0:
+            print(f"generate! {id}, {id2}")
             return [self.generate_fig(id=id, id2=id2, height=height)]              
         
         return [self.generate_fig(id=id, height=height)]

@@ -6,15 +6,31 @@ from cooccurence import Co_Occurence
 from statistics import mode
 from strongs import StrongsDict
 
+URL = "" # if native
+
+URL = "https://biblenetwork.s3.us-east-2.amazonaws.com/" # if online
+
 class BibleNetwork:
     """A network of the bible where verses are nodes."""
     def __init__(self):
+        print("Building BibleNetwork...")
         self.bible = nx.DiGraph()
-        self.strongs_dict = StrongsDict()
-        self.nodes_path = r"nodes.json"
+
+        self.strongs_enabled = False
+
+        if self.strongs_enabled:
+            print("Retrieving Strongs Dictionary...")
+            self.strongs_dict = StrongsDict()
+        else:
+            print("Did not build Strongs Dictionary...")
+
+        self.nodes_path = [r"nodes1.json", r"nodes2.json", r"nodes3.json", r"nodes4.json"]
+        # self.nodes_path = r"nodes1.json"
         self.crossrefs_path = [r"edges.json", r"edges2.json"]
 
+        print("Loading Bible...")
         self._init_verses()
+        print("Building cross references...")
         self._init_crossrefs()
         self._first_id = 0
         self._last_id = len(self.bible.nodes()) - 1
@@ -381,7 +397,7 @@ class BibleNetwork:
     
     def _optimise_subgraph(self, id):
         """Select the subgraph with the most optimal serendipity (approximated using centrality measures)."""
-        pairs = [(0.35, 5), (0.55, 4), (0.65, 2), (0.85, 0)]
+        pairs = [(0.35, 5), (0.55, 4), (0.65, 2), (0.85, 0)] # (0.35, 7) is good for densely connected verses, but not good for sparse verses
         centrality = {}
         graphs = {}
         max_nodes = 0
@@ -453,8 +469,11 @@ class BibleNetwork:
        
     def _init_verses(self):
         """Add verses to graph."""
-        verses = self._read_verses()
-        self.bible.add_nodes_from(verses)
+        for path in self.nodes_path:
+            verses = self._read_verses(path)
+            # print(verses[0:3])
+            self.bible.add_nodes_from(verses)
+
         return
 
     def _init_crossrefs(self):
@@ -463,11 +482,19 @@ class BibleNetwork:
         self.bible.add_edges_from(crossrefs)
         return
 
-    def _read_verses(self):
+    def _read_verses(self, path):
         """Reads json and returns list of verses [ tuple1(id, dict<attrs>), tuple2(id, dict<attrs>), ... ]."""
-        with open(self.nodes_path, 'r') as config_file:
+        # data = []
+        # for path in self.nodes_path:
+        #     with open(path, 'r') as config_file:
+        #         data_loaded = json.load(config_file)
+        #         data += data_loaded
+        #         # print(data[0:1])
+
+        with open(path, 'r') as config_file:
             data_loaded = json.load(config_file)
-        
+            data = data_loaded
+
         return data_loaded
     
     def _read_crossrefs(self):
@@ -620,29 +647,29 @@ if __name__ == "__main__":
     # nodes = [28375, 5842, 27169]
 
     # low 
-    node = 24332
+    node = 0
     node2 = 24335
-    print(f"Your current verse is:\n{network.get_node(node)}")
-    print(network.get_strongs(node))
-    cooccurence = network.get_cooccurence(node)
+    # print(f"Your current verse is:\n{network.get_node(node)}")
+    # # print(network.get_strongs(node))
+    # cooccurence = network.get_cooccurence(node)
 
-    node = 24230
-    print(f"Your current verse is:\n{network.get_node(node)}")
-    print(network.get_best_subgraph(node))
+    # node = 24230
+    # print(f"Your current verse is:\n{network.get_node(node)}")
+    # print(network.get_best_subgraph(node))
 
-    for node in nodes:
-        subgraph_nodes = network.get_best_subgraph(node).nodes
-        print(f"\n{network.get_name(node)}")
-        print(f"{network.get_verse(node)}")
-        # print(f"\nGet topics")
-        # print(f"{network.get_topics(node)}")
-        # print("\nGet related topics")
-        # print(f"{network.get_related_topics(node)}")
-        # print("\nGet topic count")
-        # print(f"{network.count_topics(G=network.get_best_subgraph(node), weighted=False)}\n")
+    # for node in nodes:
+    #     subgraph_nodes = network.get_best_subgraph(node).nodes
+    #     print(f"\n{network.get_name(node)}")
+    #     print(f"{network.get_verse(node)}")
+    #     # print(f"\nGet topics")
+    #     # print(f"{network.get_topics(node)}")
+    #     # print("\nGet related topics")
+    #     # print(f"{network.get_related_topics(node)}")
+    #     # print("\nGet topic count")
+    #     # print(f"{network.count_topics(G=network.get_best_subgraph(node), weighted=False)}\n")
 
-        cooccurence = network.get_cooccurence(subgraph_nodes)
-        cooccurence.print_report(k=5)
+    #     cooccurence = network.get_cooccurence(subgraph_nodes)
+    #     cooccurence.print_report(k=5)
 
 
 

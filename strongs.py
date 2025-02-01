@@ -2,7 +2,7 @@ import json
 # from nltk.corpus import stopword
 from random import choice, sample
 import re
-from nltk.tokenize import word_tokenize
+# from nltk.tokenize import word_tokenize
 # import nltk
  
 #  *

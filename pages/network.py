@@ -4,11 +4,14 @@ import BibleNetwork as bn
 import DashController as dc
 import dash_cytoscape as cyto
 
+
+print("NETWORK.py")
 NETWORK = bn.BibleNetwork()
 STYLESHEET = dc.StyleSheet()
 BUILDER = dc.DashController(NETWORK, STYLESHEET)
 cyto.load_extra_layouts()
 
+# lower = BUILDER.get_lower()
 lower = [html.Div(className='mx-3', children=[
         html.Div(className='row', children=[
             html.Div(className='pt-1 col-6 sm-col-1', style={'min-width': '250px'}, children=[
@@ -23,8 +26,7 @@ lower = [html.Div(className='mx-3', children=[
             ]),
         ])
     ]),]
-
-page = BUILDER.get_page_name("default")
+page = dc.get_page_name("default")
 
 network = page + lower
 
@@ -42,6 +44,55 @@ def get_inputs(troubleshoot=False):
     return [search, troubleshoots] if troubleshoot else [search]
 
 
+#### WORKS FOR MULTIPLE IDS ####
+@callback(
+        Output('id-store', 'data'),
+        Output('id-store2', 'data'),
+        Output('search', 'value'),
+        Output('url', 'pathname'),
+        Input('search', 'value'),
+        Input('url', 'pathname'),
+        State('page_name', 'data')
+)
+def set_ids(search, url, page):
+    trigger = ctx.triggered_id
+    print(f"Your trigger: {trigger} Your url is: {url} Your search is: {search} Your page is {page}")
+    id1, id2 = BUILDER.get_id_by_url(url, page=page)
+
+    if trigger == 'search':
+        print(f"searching for... {search}")
+        id1 = BUILDER.get_id_by_search(search, id1)
+    #elif search2:
+    #     print(f"searching for... {search}")
+    #     id1 = BUILDER.get_id_by_search(search, id)
+    elif trigger == 'url':
+        search = ''
+    
+    id1 = NETWORK.get_random_id() if id1 == '' else id1
+    print(f"id1 = {id1} id2 = {id2} url = {url} search = {search}")
+    url = BUILDER.get_url(id1, id2, page)
+    return id1, id2, search, url
+
+@callback(
+    Output('main-verse', 'children'),
+    Output('crossrefs', 'children'),
+    Output('graph', 'children'),
+    Output('themes', 'children'),
+    Input('id-store', 'data'),
+    Input('id-store2', 'data'),
+    Input("breakpoints", "widthBreakpoint"),
+)
+def get_graph(id1, id2, bp):
+    # update verse and its associates
+    print(f"id1: {id1} id2: {id2}")
+    verse = BUILDER.get_topheading(id1)
+    crossrefs = BUILDER.get_crossrefs(id1)
+    graph = BUILDER.generate_graph(id1, id2, height="65vh")
+    themes = BUILDER.get_themes(id1)
+
+    return verse, crossrefs, graph, themes
+
+#### ONLY WORKS FOR A SINGLE ID ####
 # @callback(
 #     Output('main-verse', 'children'),
 #     Output('crossrefs', 'children'),
@@ -62,9 +113,11 @@ def get_inputs(troubleshoot=False):
 #     print(f"Your trigger: {trigger} Your url is: {url} Your id is: {id}")
 
 #     if url is not None:
-#         id = BUILDER.get_id_by_url(url)
+#         id = BUILDER.get_id_by_url(url)[0]
 
 #     id = NETWORK.get_random_id() if id == '' else id
+
+#     print(id)
 
 #     print(f"updating verse...{NETWORK.get_fullname(id)}")
 
