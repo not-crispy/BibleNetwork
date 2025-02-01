@@ -427,8 +427,8 @@ class BibleNetwork:
         return graphs[top_graph]
 
     def previous_verse(self, id=""):
-        id = self.get_id if id == "" else id
-        id = id -1
+        id = self.get_id() if id == "" else id
+        id = id - 1
 
         # Check verse still exists (i.e. is not below 0)
         previous = self._first_id if id < self._first_id else id
@@ -436,7 +436,7 @@ class BibleNetwork:
         return previous
 
     def next_verse(self, id=""):
-        id = self.get_id if id == "" else id
+        id = self.get_id() if id == "" else id
         id = id + 1
         # Check verse still exists (i.e. is not above 31102)
         next = self._last_id if id > self._last_id else id

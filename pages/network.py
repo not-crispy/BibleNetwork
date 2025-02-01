@@ -50,6 +50,10 @@ def get_inputs(troubleshoot=False):
         Output('id-store2', 'data'),
         Output('search', 'value'),
         Output('url', 'pathname'),
+        Output('main-verse', 'children'),
+        Output('crossrefs', 'children'),
+        Output('graph', 'children'),
+        Output('themes', 'children'),
         Input('search', 'value'),
         Input('url', 'pathname'),
         State('page_name', 'data')
@@ -59,7 +63,7 @@ def set_ids(search, url, page):
     print(f"Your trigger: {trigger} Your url is: {url} Your search is: {search} Your page is {page}")
     id1, id2 = BUILDER.get_id_by_url(url, page=page)
 
-    if trigger == 'search':
+    if trigger == 'search' and search != None:
         print(f"searching for... {search}")
         id1 = BUILDER.get_id_by_search(search, id1)
     #elif search2:
@@ -71,26 +75,32 @@ def set_ids(search, url, page):
     id1 = NETWORK.get_random_id() if id1 == '' else id1
     print(f"id1 = {id1} id2 = {id2} url = {url} search = {search}")
     url = BUILDER.get_url(id1, id2, page)
-    return id1, id2, search, url
-
-@callback(
-    Output('main-verse', 'children'),
-    Output('crossrefs', 'children'),
-    Output('graph', 'children'),
-    Output('themes', 'children'),
-    Input('id-store', 'data'),
-    Input('id-store2', 'data'),
-    Input("breakpoints", "widthBreakpoint"),
-)
-def get_graph(id1, id2, bp):
-    # update verse and its associates
-    print(f"id1: {id1} id2: {id2}")
     verse = BUILDER.get_topheading(id1)
     crossrefs = BUILDER.get_crossrefs(id1)
     graph = BUILDER.generate_graph(id1, id2, height="65vh")
     themes = BUILDER.get_themes(id1)
 
-    return verse, crossrefs, graph, themes
+    return id1, id2, search, url, verse, crossrefs, graph, themes
+
+
+# @callback(
+#     Output('main-verse', 'children'),
+#     Output('crossrefs', 'children'),
+#     Output('graph', 'children'),
+#     Output('themes', 'children'),
+#     Input('id-store', 'data'),
+#     Input('id-store2', 'data'),
+#     Input("breakpoints", "widthBreakpoint"),
+# )
+# def get_graph(id1, id2, bp):
+#     # update verse and its associates
+#     print(f"id1: {id1} id2: {id2}")
+#     verse = BUILDER.get_topheading(id1)
+#     crossrefs = BUILDER.get_crossrefs(id1)
+#     graph = BUILDER.generate_graph(id1, id2, height="65vh")
+#     themes = BUILDER.get_themes(id1)
+
+#     return verse, crossrefs, graph, themes
 
 #### ONLY WORKS FOR A SINGLE ID ####
 # @callback(
