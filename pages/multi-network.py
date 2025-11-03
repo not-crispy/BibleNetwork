@@ -10,6 +10,7 @@ cyto.load_extra_layouts()
 divs = [html.Div(className='mx-3', children=[
         html.Div(className='row', children=[
             html.Div(className='pt-1 col-6 sm-col-1', style={'min-width': '250px'}, children=[
+                dc.get_explainer(),
                 html.H6(children="Selected Verse"),
                 html.Div(id='betweens', children=[html.P(children="lorem ipsum")]),
                 html.H6(children="Cross References"),
@@ -24,11 +25,10 @@ divs = [html.Div(className='mx-3', children=[
 
 
 def layout(**args):
-    page = dc.get_page_name("link")
-    return page + divs
+    return divs
 
-register_page("multi-network", path_template='/link/<book>/<chapter>-<verse>/<book>/<chapter>-<verse>', layout=layout())
-register_page("multi-network", path_template='<book>/<chapter>-<verse>/<book>/<chapter>-<verse>', layout=layout())
+register_page("link", path_template='/link/<book>/<chapter>-<verse>/<book>/<chapter>-<verse>', layout=layout())
+register_page("link", path_template='<book>/<chapter>-<verse>/<book>/<chapter>-<verse>', layout=layout())
 
 
 @callback(

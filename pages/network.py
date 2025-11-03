@@ -1,9 +1,8 @@
-from dash import Dash, html, dcc, callback, register_page, ctx, Output, State, Input, no_update, page_container, clientside_callback, ClientsideFunction
+from dash import Dash, html, dcc, callback, page_registry, register_page, ctx, Output, State, Input, no_update, page_container, clientside_callback, ClientsideFunction
 from dash.exceptions import PreventUpdate
 import BibleNetwork as bn
 import DashController as dc
 import dash_cytoscape as cyto
-
 
 print("NETWORK.py")
 NETWORK = bn.BibleNetwork()
@@ -11,55 +10,43 @@ STYLESHEET = dc.StyleSheet()
 BUILDER = dc.DashController(NETWORK, STYLESHEET)
 cyto.load_extra_layouts()
 
-# lower = BUILDER.get_lower()
 lower = [html.Div(className='mx-3', children=[
         html.Div(className='row', children=[
             html.Div(className='pt-1 col-6 sm-col-1', style={'min-width': '250px'}, children=[
                 html.H6(children="Selected Verse"),
-                html.Div(id='betweens', children=[html.P(children="lorem ipsum")]),
+                html.Div(id='betweens', className='mb-3', children=[html.P(children="lorem ipsum")]),
+                # dc.get_explainer(),
                 html.H6(children="Cross References"),
                 html.Div(id='crossrefs', children=[html.P(children="lorem ipsum")]),
             ]),
             html.Div(className='pt-1 col-6 sm-col-1', style={'min-width': '250px'}, children=[
                 html.H6(children="Themes"),
-                dcc.Tabs(id='themes', children=[html.P(children="lorem ipsum")], style={'display': 'inline-block', 'max-width': '500px'})
+                dcc.Tabs(id='themes', children=[html.P(children="lorem ipsum")], style={'display': 'inline-block', 'max-width': '500px'},),
             ]),
         ])
     ]),]
-page = dc.get_page_name("default")
+popup = [dc.get_popup(id="info-box")]
 
-network = page + lower
+network = lower
 
-register_page("index", path='/', layout=network)
 register_page("network", path_template='/<book>/<chapter>-<verse>', layout=network)
 
-@callback(
-        Output('inputs', 'children'),
-        Input('inputs', 'children')
-)
-def get_inputs(troubleshoot=False):
-    BUILDER = dc.DashController(NETWORK, STYLESHEET)
-    search = BUILDER.get_search()
-    troubleshoots = BUILDER.get_troubleshoots
-    return [search, troubleshoots] if troubleshoot else [search]
-
-
-#### WORKS FOR MULTIPLE IDS ####
 @callback(
         Output('id-store', 'data'),
         Output('id-store2', 'data'),
         Output('search', 'value'),
         Output('url', 'pathname'),
         Output('main-verse', 'children'),
-        Output('crossrefs', 'children'),
+        # Output('crossrefs', 'children'),
         Output('graph', 'children'),
-        Output('themes', 'children'),
+        # Output('graph-wrapper', 'style'),
+        # Output('themes', 'children'),
         Input('search', 'value'),
         Input('url', 'pathname'),
-        State('page_name', 'data')
 )
-def set_ids(search, url, page):
+def set_ids(search, url):
     trigger = ctx.triggered_id
+    page = dc.get_page_name(url, page_registry)
     print(f"Your trigger: {trigger} Your url is: {url} Your search is: {search} Your page is {page}")
     id1, id2 = BUILDER.get_id_by_url(url, page=page)
 
@@ -74,14 +61,44 @@ def set_ids(search, url, page):
     
     id1 = NETWORK.get_random_id() if id1 == '' else id1
     print(f"id1 = {id1} id2 = {id2} url = {url} search = {search}")
-    url = BUILDER.get_url(id1, id2, page)
+    url = BUILDER.get_url(id1, id2, page, url)
+    print(f"new url {url}")
     verse = BUILDER.get_topheading(id1)
-    crossrefs = BUILDER.get_crossrefs(id1)
     graph = BUILDER.generate_graph(id1, id2, height="65vh")
+    crossrefs = BUILDER.get_crossrefs(id1)
     themes = BUILDER.get_themes(id1)
 
-    return id1, id2, search, url, verse, crossrefs, graph, themes
+    if url == "/" :
+        style = {'display': 'none'}
+    else:
+        style = {}
 
+    return id1, id2, search, url, verse, graph
+
+
+@callback(
+        Output('crossrefs', 'children'),
+        Output('themes', 'children'),
+        Input('id-store', 'data'),
+        Input('id-store2', 'data'),
+)
+def set_crossrefs(id1, id2):
+    crossrefs = BUILDER.get_crossrefs(id1)
+    themes = BUILDER.get_themes(id1)
+    return crossrefs, themes
+
+@callback(
+        Output('inputs', 'children'),
+        Input('inputs', 'children')
+)
+def get_inputs(troubleshoot=False):
+    BUILDER = dc.DashController(NETWORK, STYLESHEET)
+    search = BUILDER.get_search()
+    troubleshoots = BUILDER.get_troubleshoots
+    return [search, troubleshoots] if troubleshoot else [search]
+
+
+#### WORKS FOR MULTIPLE IDS ####
 
 # @callback(
 #     Output('main-verse', 'children'),
@@ -162,11 +179,16 @@ def hover(nodeData):
     Input('network', 'tapNode'),
     Input('graph', 'n_clicks'),
     Input('themes', 'value'),
+    # Input('info-box-wrapper', 'n_clicks'),
+    Input('main-wrapper', 'n_clicks'),
     State("breakpoints", "width"),
+    # Make main wrapper z-index == 10 when info box is open ... this will solve it
 )
-def update_styles(nodeData, clicked, theme, window_width):  
+def update_styles(nodeData, clicked, theme, clicked2, window_width):  
     default_stylesheet = STYLESHEET.get_default()
     trigger = ctx.triggered_id
+
+    print("clicked")
 
     # is selected?
     if nodeData is not None:

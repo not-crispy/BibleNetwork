@@ -5,6 +5,7 @@ from random import choice
 from cooccurence import Co_Occurence
 from statistics import mode
 from strongs import StrongsDict
+import re
 
 URL = "" # if native
 
@@ -16,7 +17,7 @@ class BibleNetwork:
         print("Building BibleNetwork...")
         self.bible = nx.DiGraph()
 
-        self.strongs_enabled = False
+        self.strongs_enabled = True
 
         if self.strongs_enabled:
             print("Retrieving Strongs Dictionary...")
@@ -52,6 +53,70 @@ class BibleNetwork:
 
         # Conduct lookup and return ID
         return lookup[verse] if verse in lookup else ""
+    
+    def get_taxonomy(self):
+        """Get a dictionary of bible books and their keys."""
+        path = "bible.json"
+        with open(path, 'r') as config_file:
+            bible_taxonomy = json.load(config_file)
+        return bible_taxonomy
+    
+    def _decode_search(self, search):
+        """Parse the search and return a possible search result."""
+        search = search.strip()
+        search = re.sub(r'[^(\.\w :)]', '', search) # delete specials
+        search = re.sub(r'[ ]+', ' ', search) # remove double spaces
+        search = search.replace(':', '.').replace(' ', '.')
+        search = search.replace('1 ', '1').replace('2 ', '2').replace('3 ', '3') # parse 1 corinthians etc
+        search = search.split('.', 3)
+        print(f"search: {search}")
+
+        if len(search) < 3 :
+            return ""
+        
+        if search[0] in ['1', '2', '3'] :
+            num, bk, ch, vs = search[:4]
+            bk = bk.capitalize()
+            bk = f"{num} {bk}"
+        else :
+            bk, ch, vs = search[:3]
+            bk = bk.capitalize()
+
+        taxonomy = self.get_taxonomy()
+        print(f"!!DOUBLE {bk}")
+        bk = self.get_book_by_search(bk, taxonomy)
+        
+        if bk == "": 
+            return ""
+        
+        print(f"!BANG {bk}.{ch}.{vs}")
+        
+        return f"{bk}.{ch}.{vs}"
+
+    def get_book_by_search(self, search, taxonomy):
+        """From a given search request, returns the book id."""
+        search = search.lower()
+        for book, items in taxonomy.items():
+            if search in items['spellings']:
+                return taxonomy[book]['short']        
+
+    def get_id_by_search(self, search):
+        """From a given search request, returns the verse id."""
+        search = "" if search is None else search
+        id = self._decode_search(search)
+        id = self.get_id_by_name(id) if id != "" else "" # if a valid reference is found
+        return id
+    
+    def get_passage_by_search(self, search_start, search_end):
+        """From a given search request, returns the passage."""
+        start = "" if search_start is None else self.get_id_by_search(search_start)
+        end = "" if search_end is None else self.get_id_by_search(search_end)
+
+        if start and end: 
+            return self.get_passage(start, end, active='') # if valid references are found
+        else:
+            print(f"The search for {search_start} and {search_end} has failed.")
+            return ""      
     
     def get_random_id(self):
         """Get id of an random verse"""
@@ -109,7 +174,7 @@ class BibleNetwork:
                 name += ":" if taxonomy == "chap" else "" 
 
         return name
-
+       
     def get_passage(self, x, y, active=''):
         """Get a passage from the id x to the id y."""
         # Initialise
@@ -607,15 +672,14 @@ class BibleNetwork:
         ids = [ids] if type(ids) is int else ids
         builder = None
 
-        # Create co_occurence of all given ids
+        # Create co_occurence of the given passage
+        strongs = []
+        attrs = []
         for id in ids:
             verse = self.get_strongs(id, no_stopwords=True)
-            strongs = verse["strongs"]
-            attrs = verse["english"]
-            cooccurence = Co_Occurence(strongs, nodes_attrs=attrs, label=self.get_name(id))
-            builder = builder.merge(cooccurence) if builder else cooccurence
-
-        return builder
+            strongs += verse["strongs"]
+            attrs += verse["english"]
+        return Co_Occurence(strongs, nodes_attrs=attrs, label=self.get_name(id))
 
 def write(data, path):
     """Write data_structure to given path"""
@@ -649,6 +713,43 @@ if __name__ == "__main__":
     # low 
     node = 0
     node2 = 24335
+    node = 1903
+    k = 5
+    nodes = [i for i in range(node - k, node + k + 1)]
+
+    n0 = network.get_passage_by_search("John 1.1", "John 1.2")
+    n1 = network.get_passage_by_search("Matthew 14.15", "Matthew 14.21")
+    n2 = network.get_passage_by_search("Mark 6.35", "Mark 6.44")
+    n3 = network.get_passage_by_search("Luke 9.12", "Luke 9.17")
+    n4 = network.get_passage_by_search("John 6.4", "John 6.13")
+    n5 = network.get_passage_by_search("John 6.4", "John 6.13")
+    passages = [n0, n1, n2, n3, n4]
+
+    search = network.get_passage_by_search("Galatians 3.1", "Galatians 3.8")['ids']
+    search = network.get_passage_by_search("Romans 8.29", "Romans 8.30")['ids']
+    search = network.get_passage_by_search("John 18.1", "John 18.2")['ids']
+    search = [network.get_id_by_search("Matthew 27:3"), 
+              network.get_id_by_search("John 18:2"),]
+
+    # Calculate co-occurence for verse using context (width = k)
+    for verse in search:
+        # Get context
+        passage = [i for i in range(verse - k, verse + k + 1)]
+
+        # Get report
+        print(f"=== {network.get_name(verse)} ===")
+        print(f"{network.get_verse(verse)}")
+        cooccurence = network.get_cooccurence(passage)
+        cooccurence.print_report(k=8, but_only=network.get_strongs(verse, no_stopwords=True)['strongs'])
+        print("\n")
+
+    # Calculate co-occurence for the given passages.
+    # for passage in passages:
+    #     print(f"=== {passage['name']} ===")
+    #     cooccurence = network.get_cooccurence(passage['ids'])
+    #     cooccurence.print_report(k=8)
+    #     print("\n")
+
     # print(f"Your current verse is:\n{network.get_node(node)}")
     # # print(network.get_strongs(node))
     # cooccurence = network.get_cooccurence(node)

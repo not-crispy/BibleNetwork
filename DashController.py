@@ -1,214 +1,98 @@
 from dash import Dash, html, dcc, callback, ctx, Output, Input, no_update, exceptions
-import networkx as nx
-import pandas as pd
+import dash_bootstrap_components as dbc
 import BibleNetwork as bn
+from dash_builder import DashBuilder, COLOURS
 import dash_cytoscape as cyto
-import json
 import re
 
-def get_page_name(name):
-    return [dcc.Store(id='page_name', data=name)]
-class StyleSheet():
-    """Utility to build stylesheets"""
-    def __init__(self):
-        self.label = 'data(label)'
-        self.label_size = 12
-        self.colours = {
-            'default': 'grey', #grey light
-            'default-light': '#CFD2DB', #grey light
-            'active': '#b4d3d9', # light blue
-            'hl1': '#41A3D6', # blue
-            'hl2': '#226B97', # dark blue
-            'hl3': '#6cbccc', # grey blue
-            'focus': '#226B97', # blue
-            'buttons': 'grey',
+db = DashBuilder()
 
-        }
-        self.default = self._create_default()
+PAGE = {
+    # Each page in the PAGE_REGISTERY and their internal key. 
+    'link': 'Link',
+    'network': 'Network',
+    'home': 'Index',
+}
 
-    def get_default(self):
-        return self._create_default()
+def get_page_name(url, page_register):
+    for key, entry in page_register.items():
+        # If path_template exists, you might need to match this via regex
+        print("TESTING PAGE NAMES!!")
+        if 'path_template' in entry and entry['path_template'] is not None:
+            # Compare actual url to the template - e.g. /network/<variable>-<variable> 
+            pattern = re.sub(r"<([^>]+)>", r"(.)+?", entry['path_template'])
+            does_it_match = re.fullmatch(f'{pattern}/', f'{url}/')
+            print(f"MATCH: {pattern} ??? {does_it_match} TEMPLATE: {entry['path_template']}")
+            if does_it_match:
+                    # Return type of page
+                    return entry['name']
+        elif entry.get('path') == url:
+            return entry['name']
     
-    def get_base(self, id):
-        return self._create_base(id)
-       
-    def get_highlights(self, selector):
-        styles = [
-            {
-                "selector": selector,
-                "style": {
-                    'background-color': self.colours['focus'],
-                    'line-color': self.colours['focus'],
-                    'opacity': 0.9,
-                    'z-index': 9999
-                }
-            }]
-        return styles
-       
-    def highlight_paths(self, id, paths):
-        stylesheet = self.get_base(id)
-        
-        max_edges = len(paths) - 1
-        index = 0
-        for id in paths:
-            # Set node colour
-            selector = self._node_selector(id, 'id')
-            stylesheet.extend(self.get_highlights(selector))
+    return 'Unknown'
 
-            # Are there any edges left?
-            index += 1
-            if index > max_edges: 
-                break 
+def get_graph(display_on=True):
+        style = {} if display_on else {'display': 'none'}
+        return [    
+        html.Div(id='graph-wrapper', style=style, className='text-center border-bottom', children=[
+            html.Div(className='col-sm-12 col-lg-12 col-md-12 col-xl-12 mx-auto', children=[
+                html.Div(id="float-left", children=[
+                    html.Div(id='inputs'),
+                ]),
+                html.Div(id="float-right", children=[
+                    html.Div(children="a"),
+                ]),
+                html.Div(style={'min-width': '300px'}, children=[
+                    html.Div(id="main-wrapper", style={'display': 'block', 'width':'100%', 'height':'100vh', 'position': 'absolute'}),
+                    html.Div(id="graph", n_clicks=0),
+                    # dc.get_popup(id="info-box", target="graph"),
+                    html.Div(id='info-box-wrapper', className='absolute-centre', children=[html.Div(className='card', id='info-box')])
+                    ]),
+                html.Div(id='main-verse', className='mb-4'), # sm-col-1 
+                ]),
+            ]),
+            html.Div(className='d-grid gap-2 justify-content-sm-center mb-5', style={'display': 'none', 'color': 'light-blue'}, children=[ #d-sm-flex
+                html.Button(type='button', value='previous', id='previous', className='btn btn-primary px-4 me-sm-3', children='Previous'),
+                html.Button(type='button', value='next', id='next', className='btn btn-outline-secondary px-4 me-sm-3', children='Next'),
+            ]),
+        ]
+    
 
-            # Set edge colour
-            edge_id = f"{id}-{paths[index]}"
-            selector = self._edge_selector(edge_id, 'id')
-            stylesheet.extend(self.get_highlights(selector))
+def get_explainer():
+    classes = "big"
+    classes = ""
+    return html.Div(className=classes, children=[
+        html.H6("How it works"),
+        html.P("""The Bible Network shows how different verses, topics and themes in the Bible are connected.
+                Each graph shows you the cross-references of cross-references of cross-references (and so on) to show you how a verses fits within its biblical context."""),
+        html.H6("Who is it for?"),
+        html.P("""The Bible Network is designed for personal and academic study. Give it a go! It's a powerful tool for deepening your biblical understanding, preparing sermons,
+               exploring Jewish and early-Christian contexts, mapping theological themes and experiencing the Bible as a unified story that has unfolded across history, and is unfolding in our time."""),
+        html.P(" "),
+     ])
 
-        return stylesheet
-    
-    def get_tabs(self):
-        defaults = {
-            'padding': '6px',
-            'fontWeight': '400',
-            'width': 'fit-content',
-            'min-width': '100px',
-            'margin': '3px',
-            'borderBottom': '1px solid #d6d6d6',
-            'borderTop': '1px solid #d6d6d6',          
-        }
-        tab_style = {
-            'background-color': self.colours['buttons'],
-            'background-image': 'none',
-            'border-color': self.colours['buttons'],
-            'color': 'white',
-        }
-        tab_selected_style = {
-            'color': 'black',
-            'fontWeight': '500',
-            'padding': '6px',
-            'margin': '3px',
-            'width': 'fit-content',
-            'color': self.colours['buttons'],
-            'background-color': 'transparent',
-            'background-image': 'none',
-            'border-color': self.colours['buttons'],
-        }
-        return tab_style | defaults, tab_selected_style | defaults
-    
-    def _selector(self, x, key='id', element='node', operator='='):
-        """ Build a custom stylesheet selector.
-
-        default: node[id = "{search}"] -- select node with id 'x' """
-        if x == '':
-            selector = f"{element}[{key} {operator}]"
-        else:
-            selector = f"{element}[{key} {operator} '{x}']"
-        # print(f"Generated selector... {selector}")
-        return selector
-    
-    def _node_selector(self, x, key='id'):
-        """ Build a stylesheet selector for nodes."""
-        return self._selector(x, key=key, element='node')
-        
-    def _edge_selector(self, x, key='id'):
-        """ Build a stylesheet selector for edges."""
-        return self._selector(x, key=key, element='edge')
-    
-    def _create_default(self):
-        styles = [
-            {
-                'selector': 'node',
-                'style': {
-                    'background-color': self.colours['default'],
-                    'label': self.label,
-                    'font-size': self.label_size
-                }
-            },
-            {
-                'selector': 'edge',
-                'style': {
-                    'line-color': self.colours['default'],
-                }
-            },
-            {
-                'selector': 'node[active="active"]',
-                'style': {
-                    'background-color': self.colours['active'],
-                }
-            },]
-        return styles
-    
-    def _create_base(self, id):
-        styles = [{
-            "selector": 'node',
-            'style': {
-                'opacity': 0.3,
-                # 'shape': node_shape
-            }
-        }, {
-            'selector': 'edge',
-            'style': {
-                'opacity': 0.3,
-                'line-color': self.colours['default-light'],
-                # "curve-style": "bezier",
-            }
-        }, {
-            "selector": f'node[id = "{id}"]',
-            "style": {
-                'background-color': self.colours['hl1'],
-                "border-color": self.colours['hl2'],
-                "border-width": 2,
-                "border-opacity": 1,
-                "opacity": 1,
-
-                "label": self.label,
-                "color": self.colours['hl2'],
-                "text-opacity": 1,
-                "font-size": self.label_size,
-                'z-index': 100
-            }
-        }]
-        return styles
-
-    
+def get_popup(id, target="graph", content="no content", type="legacy"):
+    return dbc.Popover(
+            "content",
+            id=id,
+            target=target,
+            trigger=type,
+            hide_arrow=True,
+            # offset="50,20",
+            body=True,
+        )     
 class DashController():
-    """Utilities to build the View using the Model (i.e. BibleNetwork)."""
+    """Utilities to control the View using the Model (i.e. BibleNetwork)."""
     def __init__(self, network, stylesheet):
         self.network = network
         self.styles = stylesheet
         self.default_stylesheet = self.styles.get_default()
 
-    def get_em(self, children, id=""):
-        return html.Em(children=children) if id == "" else html.Em(children=children, id=id)
-    
-    def get_div(self, children, id="", className=""):
-        return html.Div(children=children, id=id, className=className)
-
-    def get_p(self, children, id=""):
-        return html.P(children=children) if id == "" else html.P(children=children, id=id)        
-    
-    def get_span(self, children, id=""):
-        return html.Span(children=children) if id == "" else html.Span(children=children, id=id)
-
-    def get_a(self, children, href="", id=""):
-        return html.A(children=children, href=href) if id == "" else html.A(children=children, href=href, id=id)  
-
-    def get_link(self, children, href="", id=""):
-        return dcc.Link(children, href=href, id=id)
-
-    def get_input(self, id="", type="", placeholder=""):
-        return dcc.Input(id=id, type=type, placeholder=placeholder, className="btn")
-
-    def get_button(self, id="", children=""):
-        classes = '' #'btn btn-outline-secondary px-4 me-sm-3'
-        return html.Button(id=id, value=id, type='button', className=classes, children=children)      
-
     def get_verse(self, id, get_name=False):
         """Returns verse as a div."""
-        name = self.get_em(self.network.get_fullname(id)) if get_name else ""
-        verse = self.get_p(self.network.get_verse(id))
-        return self.get_div([name, verse])
+        name = db.get_em(self.network.get_fullname(id)) if get_name else ""
+        verse = db.get_p(self.network.get_verse(id))
+        return db.get_div([name, verse])
     
     def get_context(self, id):
         context = self.network.get_context(id)
@@ -217,10 +101,10 @@ class DashController():
         # Retreive passage. If active, place <span> tags around it
         for id in context['ids']:
             verse = self.network.get_verse(id)
-            verse = self.get_span(verse, "context-active") if id == context['active'] else verse
+            verse = db.get_span(verse, "context-active") if id == context['active'] else verse
             verses.append(verse)
 
-        verses = self.get_p(verses)
+        verses = db.get_p(verses)
         return verses
     
     def _get_url(self, id):
@@ -228,9 +112,13 @@ class DashController():
         data = self.network.get_dictname(id)
         return f"/{data['bk'].lower()}/{data['ch']}-{data['vs']}"
     
-    def get_url(self, id1, id2="", page="default"):
+    def get_url(self, id1, id2="", page="default" , url=""):
         """For a given "page", gets the URL that corresponds to that page."""
-        if page == "link":
+        if url == "/":
+            print("bang")
+            return "/"
+        
+        if page == PAGE['link']:
            return f"/link{self._get_url(id1)}{self._get_url(id2)}"
 
         return self._get_url(id1)
@@ -240,19 +128,20 @@ class DashController():
         prev, x, next = self.get_prev_next(id=id)
         
         # Build buttons
-        back = self.get_link(id="previous", children="◄", href=self.get_url(prev))
-        forward = self.get_link(id="next", children="\u25BA", href=self.get_url(next))
-        name = self.get_span([self.network.get_fullname(id)])
-        name = self.get_div([back, name, forward], className='title')
+        back = db.get_link(id="previous", children="◄", href=self.get_url(prev))
+        forward = db.get_link(id="next", children="\u25BA", href=self.get_url(next))
+        name = db.get_span([self.network.get_fullname(id)])
+        name = html.H4([back, name, forward], className='title')
+        # name = db.get_text([back, name, forward], classes='title', size='h4', color='highlight', is_list=True)
         verses = self.get_verse(id)
 
-        return self.get_div([name, verses])
+        return db.get_div([name, verses])
     
     def get_passage(self, data):
         """Returns passage as a div."""
-        name = self.get_em(data['name'])
-        verse = self.get_p(data['passage'])
-        return self.get_div([name, verse])
+        name = db.get_em(data['name'])
+        verse = db.get_p(data['passage'])
+        return db.get_div([name, verse])
     
     def get_themes(self, id):
         """Returns themes as a list of tabs."""
@@ -282,26 +171,26 @@ class DashController():
     def get_troubleshoots(self):
         inputs = html.Div([
             html.Span(["cross-refs:"]),
-            self.get_input(id=f"crossrefs-troubleshoot", type='number', placeholder=5),
+            db.get_input(id=f"crossrefs-troubleshoot", type='number', placeholder=5),
             html.Span(["factor:"]),  
-            self.get_input(id=f"factor-troubleshoot", type='number', placeholder=0.35),
+            db.get_input(id=f"factor-troubleshoot", type='number', placeholder=0.35),
             ])
         
         return inputs
     
-    def get_search(self):
-        msg = "type a verse... eg. Matthew 4:3"
+    def get_search(self, msg='', id="search", classes=""):
+        msg = msg if msg else "type a verse... eg. Matthew 4:3"
         inputs = html.Div([  
-            self.get_input(id=f"search", type='text', placeholder=f"{msg}")
-            ])
+            db.get_input(id=id, type='text', placeholder=f"{msg}")
+            ], className=f"{classes} fancy-search")
         
         return inputs
     
-    def get_taxonomy(self):
-        path = "bible.json"
-        with open(path, 'r') as config_file:
-            bible_taxonomy = json.load(config_file)
-        return bible_taxonomy
+    def get_id_by_search(self, search, current_id=""):
+        """Returns the id that corresponds to the search."""
+        id = self.network.get_id_by_search(search)
+        id = current_id if id == "" else id
+        return id
     
     def get_verses_dropdown(self):
         """Returns a book / chapter / verse dropdown."""
@@ -454,7 +343,7 @@ class DashController():
                     },
             elements=edges+nodes,
             stylesheet=styles,
-            style={'width': '100%', 'height': height},
+            style={'width': '100%', 'height': height, 'max-height': '620px'},
             zoom=1.1,
             zoomingEnabled=True,
             maxZoom=1.2,
@@ -466,58 +355,17 @@ class DashController():
     
         return fig
     
-    def decode_search(self, search):
-        search = search.strip()
-        search = re.sub(r'[^(\.\w :)]', '', search) # delete specials
-        search = re.sub(r'[ ]+', ' ', search) # remove double spaces
-        search = search.replace(':', '.').replace(' ', '.')
-        search = search.replace('1 ', '1').replace('2 ', '2').replace('3 ', '3') # parse 1 corinthians etc
-        search = search.split('.', 3)
-        print(f"search: {search}")
-
-        if len(search) < 3 :
-            return ""
-        
-        if search[0] in ['1', '2', '3'] :
-            num, bk, ch, vs = search[:4]
-            bk = bk.capitalize()
-            bk = f"{num} {bk}"
-        else :
-            bk, ch, vs = search[:3]
-            bk = bk.capitalize()
-
-        taxonomy = self.get_taxonomy()
-        bk = self.get_book_by_search(bk, taxonomy)
-        
-        if bk == "": 
-            return ""
-        
-        return f"{bk}.{ch}.{vs}"
-
-    def get_book_by_search(self, search, taxonomy):
-        search = search.lower()
-        for book, items in taxonomy.items():
-            if search in items['spellings']:
-                return taxonomy[book]['short']        
-
-    def get_id_by_search(self, search, current_id=""):
-        search = "" if search is None else search
-        id = self.decode_search(search)
-        id = self.network.get_id_by_name(id) if id != "" else "" # only do if a reference is given
-        id = current_id if id == "" else id
-        return id
-    
     def _get_id_by_url(self, url):
         "input: genesis/1-2 ----> genesis 1.2"
         search = url.replace("/", " ").replace("-",".").strip()
-        return self.get_id_by_search(search=search)
+        return self.network.get_id_by_search(search=search)
     
-    def get_id_by_url(self, url, page="default"):
+    def get_id_by_url(self, url, page=PAGE['network']):
         "Parse the url based on the given page."
         id1, id2 = ["", ""]
         x = url.split("/")
 
-        if page == "link":
+        if page == PAGE['link']:
             x = url.replace("/link", "").split("/")
             url1, url2 = [f"{x[1]}/{x[2]}", f"{x[3]}/{x[4]}"]
             id1 = self._get_id_by_url(url1)
@@ -551,11 +399,198 @@ def test(n_click):
     else:
         raise exceptions.PreventUpdate
     
+
+class StyleSheet():
+    """Utility to build stylesheets"""
+    def __init__(self):
+        self.label = 'data(label)'
+        self.label_size = 10
+        self.sizes = {
+            'radius': 24,
+            'line': 2,
+        }
+        self.colours = {
+            'default': COLOURS["mid grey"],
+            'default-lines': COLOURS["mid grey"],
+            'default-light': '#CFD2DB',
+            'active': COLOURS["blue"],
+            'hl1': '#41A3D6', # blue
+            'hl2': '#226B97', # dark blue
+            'hl3': '#6cbccc', # grey blue
+            'focus': '#226B97', # blue
+            'label': COLOURS['dark grey'],
+            'buttons': COLOURS["mid grey"],
+            
+            # 'default': 'grey', #grey light
+            # 'default-light': '#CFD2DB', #grey light
+            # 'active': '#b4d3d9', # light blue
+            # 'hl1': '#41A3D6', # blue
+            # 'hl2': '#226B97', # dark blue
+            # 'hl3': '#6cbccc', # grey blue
+            # 'focus': '#226B97', # blue
+            # 'buttons': 'grey',
+
+        }
+        self.default = self._create_default()
+
+    def get_default(self):
+        return self._create_default()
+    
+    def get_base(self, id):
+        return self._create_base(id)
+       
+    def get_highlights(self, selector):
+        styles = [
+            {
+                "selector": selector,
+                "style": {
+                    'background-color': self.colours['focus'],
+                    'line-color': self.colours['focus'],
+                    'opacity': 0.9,
+                    'z-index': 9999
+                }
+            }]
+        return styles
+       
+    def highlight_paths(self, id, paths):
+        stylesheet = self.get_base(id)
+        
+        max_edges = len(paths) - 1
+        index = 0
+        for id in paths:
+            # Set node colour
+            selector = self._node_selector(id, 'id')
+            stylesheet.extend(self.get_highlights(selector))
+
+            # Are there any edges left?
+            index += 1
+            if index > max_edges: 
+                break 
+
+            # Set edge colour
+            edge_id = f"{id}-{paths[index]}"
+            selector = self._edge_selector(edge_id, 'id')
+            stylesheet.extend(self.get_highlights(selector))
+
+        return stylesheet
+    
+    def get_tabs(self):
+        defaults = {
+            'padding': '6px',
+            'fontWeight': '400',
+            'width': 'fit-content',
+            'min-width': '100px',
+            'margin': '3px',
+            'borderBottom': '1px solid #d6d6d6',
+            'borderTop': '1px solid #d6d6d6',          
+        }
+        tab_style = {
+            'background-color': self.colours['buttons'],
+            'background-image': 'none',
+            'border-color': self.colours['buttons'],
+            'color': 'white',
+        }
+        tab_selected_style = {
+            'color': 'black',
+            'fontWeight': '500',
+            'padding': '6px',
+            'margin': '3px',
+            'width': 'fit-content',
+            'color': self.colours['buttons'],
+            'background-color': 'transparent',
+            'background-image': 'none',
+            'border-color': self.colours['buttons'],
+        }
+        return tab_style | defaults, tab_selected_style | defaults
+    
+    def _selector(self, x, key='id', element='node', operator='='):
+        """ Build a custom stylesheet selector.
+
+        default: node[id = "{search}"] -- select node with id 'x' """
+        if x == '':
+            selector = f"{element}[{key} {operator}]"
+        else:
+            selector = f"{element}[{key} {operator} '{x}']"
+        # print(f"Generated selector... {selector}")
+        return selector
+    
+    def _node_selector(self, x, key='id'):
+        """ Build a stylesheet selector for nodes."""
+        return self._selector(x, key=key, element='node')
+        
+    def _edge_selector(self, x, key='id'):
+        """ Build a stylesheet selector for edges."""
+        return self._selector(x, key=key, element='edge')
+    
+    def _create_default(self):
+        styles = [
+            {
+                'selector': 'node',
+                'style': {
+                    'background-color': self.colours['default'],
+                    'label': self.label,
+                    'color': self.colours['label'], #labels
+                    'font-size': self.label_size,
+                    "height": self.sizes['radius'],
+                    "width": self.sizes['radius'],
+                }
+            },
+            {
+                'selector': 'edge',
+                'style': {
+                    'line-color': self.colours['default-lines'],
+                    'width': self.sizes['line'],
+                }
+            },
+            {
+                'selector': 'node[active="active"]',
+                'style': {
+                    'background-color': self.colours['active'],
+                }
+            },]
+        return styles
+    
+    def _create_base(self, id):
+        styles = [{
+            "selector": 'node',
+            'style': {
+                'opacity': 0.3,
+                "height": self.sizes['radius'],
+                "width": self.sizes['radius'],
+                # 'shape': node_shape
+            }
+        }, {
+            'selector': 'edge',
+            'style': {
+                'opacity': 0.3,
+                'line-color': self.colours['default-light'],
+                'width': self.sizes['line'],
+                # "curve-style": "bezier",
+            }
+        }, {
+            "selector": f'node[id = "{id}"]',
+            "style": {
+                'background-color': self.colours['hl1'],
+                "border-color": self.colours['hl2'],
+                "border-opacity": 1,
+                "opacity": 1,
+                "height": self.sizes['radius'],
+                "width": self.sizes['radius'],
+
+                "label": self.label,
+                "color": self.colours['hl2'],
+                "text-opacity": 1,
+                "font-size": self.label_size,
+                'z-index': 100
+            }
+        }]
+        return styles
+    
 if __name__ == '__main__':
     network = bn.BibleNetwork()
-    stylesheet = StyleSheet()
+    stylesheet = db.StyleSheet()
     controller = DashController(network, stylesheet)
     searches = ["afhasdsadas", "^3k&dx", 'Matthew 1.4', 'Genesis 2:6', 'gen 15:15', 'Genesis 23:10', 'Ecclesssia 4.11', '&&&Matthew 21:10', 'Matt 04:3']
     for search in searches:
-        print(f"search: {search} result: {controller.get_id_by_search(search)}")
+        print(f"search: {search} result: {controller.network.get_id_by_search(search)}")
     # print(controller.build_div([32,4,5]))

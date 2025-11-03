@@ -1,5 +1,6 @@
 import csv
 import json
+import traceback
 from strongs import StrongsDict
 
 # Convert verses.csv into a readable data structure
@@ -110,7 +111,7 @@ def assign_strong_greek(path, books_path):
             # Check if stop word
             try:
                 data["stop_word"] = STRONGS_DICT.is_stopword(data["sn"])
-            except KeyError:
+            except KeyError as e:
                 data["stop_word"] = False
 
             # Add the word
@@ -317,7 +318,7 @@ def assign_strong_to_esv(path):
 def create_similar_topics_dict(all_topics):
     """Identify similar topics and group them."""
     topics_dict = {}
-    SMALL_WORDS_TO_KEEP = ["word"]
+    SMALL_WORDS_TO_KEEP = ["word", "sex"]
     TOPICS_TO_KEEP = ["kingdom of god", "promised land", "speaking in tongues", "holy spirit", "the spirit of", "holy ghost", "gods word", "the word"
                       "seeking gods will", "seeking knowledge", "spiritual leader", "the word"]
     TOPICS_TO_DELETE = ["tests", "bethany", "others", "moving", "people", "spirit", "ghost", "stubborn women", "revel", "yourself", "family", "loving", "giving", "stand"]
@@ -331,7 +332,7 @@ def create_similar_topics_dict(all_topics):
                         "holy ghost": "holy spirit", "tattoo": "tattoos", "word": "our words", "seeking": "seeking god", "gods will": "knowing gods will",
                         "the word": "gods word", "humble": "humility", "forgive": "forgiveness", "rude": "rudeness", "being rude": "rudeness", "loving each other": "loving others", "offering": "tithing", "tithe": "tithing",
                         "spiritual": "life in the spirit", "understanding": "knowledge", "knowledge": "knowledge / understanding", "selfless": "selflessness",
-                        "special": "being special", "relationship": "relationships"}
+                        "special": "being special", "relationship": "relationships", "nervous": "anxiety", "anxious": "anxiety"}
     # "tattoo": "tattoos",  #"the word": "gods word", 
     SUBTOPICS_TO_ADD = {"selfish": ["self seeking"], "humility": ["humble"], "kindness": ["kind"], "love": ["loving"], 
                         "generosity": ["giving", "giving to others", "gift giving", "giving money"], 
@@ -340,12 +341,20 @@ def create_similar_topics_dict(all_topics):
                         "gods word": ["word of god",  "gods word"], "confessing sins": ["confession of sin"]} 
     SUBTOPICS_TO_SUBTRACT = {"our words": "gods word", }
 
-    # Find subtopics and group them under parents
+    # Find similar topics (i.e. subtopics) and group them
     for topic in all_topics:
         for x in all_topics:
 
-            contains_topic = (f"{topic} " in x) or (f" {topic}" in x) or (f"{topic}ity" in x) or (f"{topic}s" in x) or (f"{topic}ing" in x) or (f"{topic}ship" in x) or (f"{topic}ness" in x)
+            topic_stems = [f"{topic} ", f" {topic}", f"{topic}ity", f"{topic}s", f"{topic}ing", f"{topic}ship", f"{topic}ness"]
 
+            # Check if the topic is similar (i.e. it contains the stem word)
+            contains_topic = False
+            for stem in topic_stems:
+                if stem in x:
+                    contains_topic = True
+                    break
+                
+            # Topic is similar ... 
             if contains_topic and topic is not x and (len(topic) > 4 or topic in SMALL_WORDS_TO_KEEP):
                 if topic in topics_dict:
                     topics_dict[topic].append(x)
@@ -624,7 +633,7 @@ def read_verses(verses_path, books_path, topics_path, strongs_path):
             data["version"] = "ESV"
             data["id"] = id
             data["topics"] = topics[data['name']] if data['name'] in topics else [] # if verse has topics, assign topics
-            # data["strongs"] = strongs[data['name']] if data['name'] in strongs else [] #if verse has strongs, assign strongs
+            data["strongs"] = strongs[data['name']] if data['name'] in strongs else [] #if verse has strongs, assign strongs
 
             # Create verse node
             verse = (id, data)
@@ -686,12 +695,12 @@ if __name__ == "__main__":
     strongs_heb_write = r"strongs-hebrew.json"
     translation_path = r"strong-translation.json"
 
-    # greek = assign_strong_greek(strongs_greek_path, books_csv)
-    # write_json(greek, strongs_greek_write)
-    # hebrew = assign_strong_hebrew(strongs_hebrew_path, books_csv)
-    # write_json(hebrew, strongs_heb_write)
-    # greek.update(hebrew)
-    # write_json(greek, translation_path)
+    greek = assign_strong_greek(strongs_greek_path, books_csv)
+    write_json(greek, strongs_greek_write)
+    hebrew = assign_strong_hebrew(strongs_hebrew_path, books_csv)
+    write_json(hebrew, strongs_heb_write)
+    greek.update(hebrew)
+    write_json(greek, translation_path)
 
     # Read verses and write in graph-readable format
 
