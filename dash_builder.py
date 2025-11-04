@@ -9,8 +9,9 @@ COLOURS = {
 
     'white': 'white',
     'black': '#000000',
-    'dark blue': '#2E5C99',
+    'dark blue': '#226B97',
     'blue': '#41A3D6',
+    'grey blue': '#6cbccc',
     # 'old-blue': '#4183D9', 
     'dark grey': "#3B3B3B",
     'mid grey': '#808080',
@@ -34,8 +35,8 @@ class DashBuilder():
     def get_a(self, children, href="", id=""):
         return html.A(children=children, id=id, href=href)
 
-    def get_link(self, children, href="", id=""):
-        return dcc.Link(children, href=href, id=id)
+    def get_link(self, children, href="", id="", classes=""):
+        return dcc.Link(children, href=href, id=id, className=classes)
 
     def get_input(self, id="", type="", placeholder="", classes=""):
         return dcc.Input(id=id, type=type, placeholder=placeholder, className=f"{classes} btn")
@@ -95,17 +96,11 @@ class DashBuilder():
 
         return new_text
 
-    def get_text(self, text, delimiter="#", size='h1', id='', classes='', color='default', is_list=False):
+    def get_text(self, text, delimiter="#", size='h1', id='', classes='', color='default'):
         """Return a div containing the hero text. Any text surrounded by # is emphasised.
         e.g. text='This is #Bible Network#""" 
 
-        # Apply emphasis
-        if is_list:
-            text = [self.get_emphasis(x) for x in text]
-        else:
-            text = self.get_emphasis(text)
-
-        # Create div
+        text = self.get_emphasis(text)
         size = size.lower()
 
         if size == 'h1':
@@ -127,7 +122,7 @@ class DashBuilder():
         else:
             color = COLOURS['default']
 
-        container = x(className="text hero mx-auto"+classes, children=text, id=id, style={'color': color})
+        container = x(className="text hero mx-auto "+classes, children=text, id=id, style={'color': color})
         return container
 
     def get_row(self, content=[], classes=""):

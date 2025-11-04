@@ -10,21 +10,7 @@ STYLESHEET = dc.StyleSheet()
 BUILDER = dc.DashController(NETWORK, STYLESHEET)
 cyto.load_extra_layouts()
 
-lower = [html.Div(className='mx-3', children=[
-        html.Div(className='row', children=[
-            html.Div(className='pt-1 col-6 sm-col-1', style={'min-width': '250px'}, children=[
-                html.H6(children="Selected Verse"),
-                html.Div(id='betweens', className='mb-3', children=[html.P(children="lorem ipsum")]),
-                # dc.get_explainer(),
-                html.H6(children="Cross References"),
-                html.Div(id='crossrefs', children=[html.P(children="lorem ipsum")]),
-            ]),
-            html.Div(className='pt-1 col-6 sm-col-1', style={'min-width': '250px'}, children=[
-                html.H6(children="Themes"),
-                dcc.Tabs(id='themes', children=[html.P(children="lorem ipsum")], style={'display': 'inline-block', 'max-width': '500px'},),
-            ]),
-        ])
-    ]),]
+lower = dc.get_network_lower()
 popup = [dc.get_popup(id="info-box")]
 
 network = lower
@@ -37,10 +23,7 @@ register_page("network", path_template='/<book>/<chapter>-<verse>', layout=netwo
         Output('search', 'value'),
         Output('url', 'pathname'),
         Output('main-verse', 'children'),
-        # Output('crossrefs', 'children'),
         Output('graph', 'children'),
-        # Output('graph-wrapper', 'style'),
-        # Output('themes', 'children'),
         Input('search', 'value'),
         Input('url', 'pathname'),
 )
@@ -65,8 +48,6 @@ def set_ids(search, url):
     print(f"new url {url}")
     verse = BUILDER.get_topheading(id1)
     graph = BUILDER.generate_graph(id1, id2, height="65vh")
-    crossrefs = BUILDER.get_crossrefs(id1)
-    themes = BUILDER.get_themes(id1)
 
     if url == "/" :
         style = {'display': 'none'}
@@ -79,13 +60,15 @@ def set_ids(search, url):
 @callback(
         Output('crossrefs', 'children'),
         Output('themes', 'children'),
+        Output('crossref-title', 'children'),
         Input('id-store', 'data'),
         Input('id-store2', 'data'),
 )
 def set_crossrefs(id1, id2):
     crossrefs = BUILDER.get_crossrefs(id1)
     themes = BUILDER.get_themes(id1)
-    return crossrefs, themes
+    crossref_title = BUILDER.get_crossrefs_title(id1)
+    return crossrefs, themes, crossref_title
 
 @callback(
         Output('inputs', 'children'),

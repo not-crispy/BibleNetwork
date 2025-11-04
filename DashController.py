@@ -14,6 +14,23 @@ PAGE = {
     'home': 'Index',
 }
 
+def get_network_lower():
+    return [html.Div(className='border-box w-100', children=[ #add 'mirror' to flip borderbox
+        html.Div(className='row p-4', children=[
+            html.Div(className='py-3 col-md-6 col-sm-12', style={'min-width': '250px'}, children=[
+                get_explainer(),
+                db.get_text("Cross References", size="H4", color="highlight", id="crossref-title"),
+                html.Div(id='crossrefs', children=[html.P(children="")], style={"max-width": "90%"}),
+                db.get_text("Selected Verse", size="H4", color="highlight"),
+                html.Div(id='betweens', className='mb-3', children=[html.P(children="")]),
+            ]),
+            html.Div(className='py-3 col-md-6 col-sm-12', style={'min-width': '250px'}, children=[
+                db.get_text("Related Themes", size="H4", color="highlight", classes="mw-50"),
+                dcc.Tabs(id='themes', className='mx-auto', children=[html.P(children="")], style={'display': 'inline-block', 'max-width': '500px'},),
+            ]),
+        ])
+    ]),]
+
 def get_page_name(url, page_register):
     for key, entry in page_register.items():
         # If path_template exists, you might need to match this via regex
@@ -34,14 +51,14 @@ def get_page_name(url, page_register):
 def get_graph(display_on=True):
         style = {} if display_on else {'display': 'none'}
         return [    
-        html.Div(id='graph-wrapper', style=style, className='text-center border-bottom', children=[
+        html.Div(id='graph-wrapper', style=style, className='text-center', children=[
             html.Div(className='col-sm-12 col-lg-12 col-md-12 col-xl-12 mx-auto', children=[
                 html.Div(id="float-left", children=[
                     html.Div(id='inputs'),
                 ]),
-                html.Div(id="float-right", children=[
-                    html.Div(children="a"),
-                ]),
+                # html.Div(id="float-right", children=[
+                #     html.Div(children="a"),
+                # ]),
                 html.Div(style={'min-width': '300px'}, children=[
                     html.Div(id="main-wrapper", style={'display': 'block', 'width':'100%', 'height':'100vh', 'position': 'absolute'}),
                     html.Div(id="graph", n_clicks=0),
@@ -59,15 +76,14 @@ def get_graph(display_on=True):
     
 
 def get_explainer():
-    classes = "big"
     classes = ""
     return html.Div(className=classes, children=[
-        html.H6("How it works"),
-        html.P("""The Bible Network shows how different verses, topics and themes in the Bible are connected.
-                Each graph shows you the cross-references of cross-references of cross-references (and so on) to show you how a verses fits within its biblical context."""),
-        html.H6("Who is it for?"),
-        html.P("""The Bible Network is designed for personal and academic study. Give it a go! It's a powerful tool for deepening your biblical understanding, preparing sermons,
-               exploring Jewish and early-Christian contexts, mapping theological themes and experiencing the Bible as a unified story that has unfolded across history, and is unfolding in our time."""),
+        db.get_text("How it works", size="H4", color="highlight"),
+        html.P("""This interactive tool takes all the cross-references in the Bible and shows how verses are connected. 
+               By visualising cross-references, this tool helps you find new connections and understand how verses relates to other verses in the Bible."""),
+        # db.get_text("Who is it for?", size="H4", color="highlight"),
+        # html.P("""The Bible Network is designed for personal and academic study. Give it a go! It's a powerful tool for deepening your biblical understanding, preparing sermons,
+        #       exploring Jewish and early-Christian contexts, mapping theological themes and experiencing the Bible as a unified story that has unfolded across history, and is unfolding in our time."""),
         html.P(" "),
      ])
 
@@ -88,11 +104,12 @@ class DashController():
         self.styles = stylesheet
         self.default_stylesheet = self.styles.get_default()
 
-    def get_verse(self, id, get_name=False):
+    def get_verse(self, id, get_name=False, get_url=False):
         """Returns verse as a div."""
         name = db.get_em(self.network.get_fullname(id)) if get_name else ""
+        link = self.get_url_as_link(id) if get_url else ""
         verse = db.get_p(self.network.get_verse(id))
-        return db.get_div([name, verse])
+        return db.get_div([name, link, verse])
     
     def get_context(self, id):
         context = self.network.get_context(id)
@@ -123,6 +140,9 @@ class DashController():
 
         return self._get_url(id1)
     
+    def get_url_as_link(self, id):
+        return db.get_link(classes="inline arrow", children="\u2192", href=self.get_url(id))
+    
     def get_topheading(self, id):
         # Get previous and next ids
         prev, x, next = self.get_prev_next(id=id)
@@ -130,8 +150,8 @@ class DashController():
         # Build buttons
         back = db.get_link(id="previous", children="◄", href=self.get_url(prev))
         forward = db.get_link(id="next", children="\u25BA", href=self.get_url(next))
-        name = db.get_span([self.network.get_fullname(id)])
-        name = html.H4([back, name, forward], className='title')
+        name = db.get_text(self.network.get_fullname(id), classes='title inline', size='h5', color='highlight')
+        name = html.H5([back, name, forward], className='title')
         # name = db.get_text([back, name, forward], classes='title', size='h4', color='highlight', is_list=True)
         verses = self.get_verse(id)
 
@@ -225,13 +245,16 @@ class DashController():
         for crossref in self.network.get_crossrefs(source_id):
             # build crossreferences
             id = crossref[0]
-            children.append(self.get_verse(id, get_name=True))
+            children.append(self.get_verse(id, get_name=True, get_url=True))
 
             # don't get more than max cross references
             count = count + 1 if count < max else -1 
             if count == -1 : break 
 
         return children
+    
+    def get_crossrefs_title(self, id):
+        return f"Cross-references of {self.network.get_fullname(id)}"
     
     def get_column_left(self):
         """Returns the information for the left column for a page with a graph."""
@@ -414,10 +437,10 @@ class StyleSheet():
             'default-lines': COLOURS["mid grey"],
             'default-light': '#CFD2DB',
             'active': COLOURS["blue"],
-            'hl1': '#41A3D6', # blue
-            'hl2': '#226B97', # dark blue
-            'hl3': '#6cbccc', # grey blue
-            'focus': '#226B97', # blue
+            'hl1': COLOURS["blue"],
+            'hl2': COLOURS["dark blue"],
+            'hl3': COLOURS["grey blue"],
+            'focus': COLOURS["dark blue"],
             'label': COLOURS['dark grey'],
             'buttons': COLOURS["mid grey"],
             
