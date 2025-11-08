@@ -240,6 +240,31 @@ def select_theme(theme):
     return stylesheet
 
 
+@callback(
+    Output("carousel-content", "children"),
+    Output("carousel-index", "data"),
+    Input("prev-btn", "n_clicks"),
+    Input("next-btn", "n_clicks"),
+    State("carousel-index", "data"),
+)
+def update_carousel(prev_clicks, next_clicks, index):
+    direction = ctx.triggered_id
+    slides = BUILDER.get_verses(ids=[1,11638,2,1247,5])
+
+    # Initialise slides
+    if not direction:
+        return BUILDER.get_slide(index, slides), index
+    
+    # Fetch new slides    
+    print(direction)
+    total = len(slides)
+
+    if direction == "next-btn":
+        index = (index + 4) % total
+    elif direction == "prev-btn":
+        index = (index - 4) % total
+
+    return BUILDER.get_slide(index, slides), index
 
 # dash.register_page(__name__, path_template='/<book>/<chapter>-<verse>')
 # dash.register_page(__name__, path_template='/')

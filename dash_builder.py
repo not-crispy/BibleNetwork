@@ -41,28 +41,16 @@ class DashBuilder():
     def get_input(self, id="", type="", placeholder="", classes=""):
         return dcc.Input(id=id, type=type, placeholder=placeholder, className=f"{classes} btn")
     
-    def get_button(self, id="", children="", fancy=False, classes='', styles={}):
-        classes = f'fancy-button light-border {classes}' if fancy else classes #'btn btn-outline-secondary px-4 me-sm-3'
+    def get_button(self, id="", children="", fancy=False, basic=False, classes='', styles={}):
+        classes = f'fancy-button light-border {classes}' if fancy else classes
+        classes = f'basic-button light-border {classes}' if basic else classes
         return html.Button(id=id, value=id, type='button', style=styles, className=f"{classes} btn", children=children)
   
-    def get_newsletter_button(self, styles={}):
-        return self.get_button(fancy=True, styles=styles, children=[self.get_emphasis('#Receive news & updates in your inbox.#')])
+    def get_newsletter_button(self, styles={}, classes=""):
+        return self.get_button(basic=True, styles=styles, classes=classes, children=self.get_emphasis('#Receive news & updates in your inbox.#', italics=False))
 
     def get_div(self, children, id="", classes=""):
         return html.Div(children=children, id=id, className=classes)
-        
-    def get_footer(self):
-        footer = html.Div(html.Div(id='footer', className="mx-auto", style={
-            'background': f'linear-gradient({COLOURS['footer']}, rgba(0,0,0,0))'
-        }, children=[
-            # self.get_newsletter_button(styles={'float': 'right'}), ## TODO
-            self.get_row([
-
-            ]),
-            self.get_div(classes='extra-rounded-borders mx-auto fancy-button light-border', 
-                            children=self.get_text(size='h5', color='white', text='A #gospel-charged tool# for interactive exploration of cross-references, exegetical contexts, theology and themes.'))
-        ]))
-        return footer
 
     def get_header(self):
         header = html.Div(id='header', children=[
@@ -74,16 +62,19 @@ class DashBuilder():
         box = html.Div(className="border-box text-center mx-auto", children=children, id=id)
         return box
 
-    def get_content_box(self, children, id='', focus=False, center=True, classes=''):
+    def get_content_box(self, children, id='', focus=False, center=True, classes='', full_width=False):
         focus = 'focus' if focus else ''
         center = 'text-center' if center else ''
-        box = html.Div(className=f"{center} box-wrapper {classes}", 
-                    children=html.Div(children, className=f"{focus} mx-auto box-content"), 
+        size_wrapper = '' if full_width else 'box-wrapper'
+        box_content = 'py-4' if full_width else 'box-content'
+
+        box = html.Div(className=f"{center} {size_wrapper} {classes}", 
+                    children=html.Div(children, className=f"{focus} mx-auto {box_content}"), 
                     id=id)
         return box
 
-    def get_emphasis(self, text, delimiter="#"):
-        text = text.split(delimiter)
+    def get_emphasis(self, text, delimiter="#", italics=True, emphasise_all=False):
+        text = [text] if emphasise_all else text.split(delimiter)
         new_text = []
 
         # Decode text and emphasis any text that is between delimiters
@@ -92,11 +83,12 @@ class DashBuilder():
             if i % 2 == 1: # odd index
                 new_text.append(phrase)
             else: # even index
-                new_text.append(html.Span(phrase))
+                classes = "emphasis" if italics else "emphasis no-italics"
+                new_text.append(html.Span(phrase, className=classes))
 
         return new_text
 
-    def get_text(self, text, delimiter="#", size='h1', id='', classes='', color='default'):
+    def get_text(self, text, delimiter="#", size='h1', id='', classes='', color='default', hero=True):
         """Return a div containing the hero text. Any text surrounded by # is emphasised.
         e.g. text='This is #Bible Network#""" 
 
@@ -113,8 +105,12 @@ class DashBuilder():
             x = html.H4
         elif size == 'h5':
             x = html.H5
+        elif size == 'h6':
+            x = html.H6
         elif size == 'p':
             x = html.P
+        elif size == 'span':
+            x = html.Span
 
         # Get colour
         if color in COLOURS:
@@ -122,14 +118,60 @@ class DashBuilder():
         else:
             color = COLOURS['default']
 
-        container = x(className="text hero mx-auto "+classes, children=text, id=id, style={'color': color})
+        # Get classes
+        classes = "text mx-auto "+classes
+        classes = "hero "+classes if hero else classes
+        container = x(className=classes, children=text, id=id, style={'color': color})
         return container
 
     def get_row(self, content=[], classes=""):
-        print(content)
-        columns = [html.Div(className="col-sm", children=x) for x in content]
-
         container = html.Div(className="container "+classes, children=[
-            html.Div(className="row", children=columns)
+            html.Div(className="row", children=content)
         ])
         return container
+    
+    def get_slide(self, start_index, items, visible=4):
+        """Build the wrapper for a carousel slide."""
+        
+        visible_items = items[start_index:start_index + visible]
+        if len(visible_items) < visible:
+            visible_items += items[:visible - len(visible_items)]
+
+        return dbc.Row([
+                dbc.Col(
+                    self.get_div(
+                        self.get_div([
+                                self.get_text(it["name"], size='h4', classes="emphasis"),
+                                self.get_text(it["verse"], size='p', classes="fancy", hero=False),
+                                html.A("Explore now \u2192", href=it['link'], className="emphasis arrow"),
+                            ], classes="px-2"),
+                        classes="h-100 px-2 py-3 shadow-sm carousel-card",
+                    ),
+                    md=3, sm=6, xs=12, className="position-relative px-0 mb-4"
+                )
+                for it in visible_items
+            ],
+            className="g-3 justify-content-center",
+        )
+        
+    def get_carousel(self):
+        """Build the skeleton for an interactive carousel."""
+        return dbc.Container([
+            dbc.Row([
+                dbc.Col(
+                    html.Button("\u276E", id="prev-btn", n_clicks=0, className="btn btn-outline-primary"),
+                    width="auto",
+                    align="center",
+                ),
+                dbc.Col(id="carousel-content", width=True),
+                dbc.Col(
+                    html.Button("\u276F", id="next-btn", n_clicks=0, className="btn btn-outline-primary"),
+                    width="auto",
+                    align="center",
+                    ),
+                ],
+                className="align-items-center text-center mt-4",
+                ),
+            ],
+            fluid=True,
+        )

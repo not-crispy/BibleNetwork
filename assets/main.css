@@ -17,6 +17,20 @@
     h5 {
         font-size: 1rem;
     }
+
+    #home .hero.text span {
+        z-index: 10;
+        position: relative;
+    }
+
+    #home img.center-absolute {
+        left: 50%;
+    }
+
+    .twist {
+        transform: translate(-50%, -50%) rotate(4deg);
+    }
+
 }
 
 @media only screen and (max-width: 600px) {
@@ -41,7 +55,7 @@
     }
 
     h3 {
-        font-size: 1.4rem !important;
+        font-size: 1.6rem !important;
     }
 
     h4 {
@@ -55,6 +69,24 @@
     #graph {
         height: 60vh;
     }
+
+    #footer .row {
+        margin: 0;
+    }
+
+    #footer .row div {
+        padding: 3px 0;
+    }
+
+    #footer .row p {
+        font-size: 1.4rem !important;
+        text-align: center;
+    }
+
+    #footer {
+        width: 98%;
+    }
+
 } 
     
     canvas {
@@ -69,6 +101,7 @@ body {
 #header {
     padding: 25px 3%;
     position: absolute;
+    z-index: 10;
     top: 0;
     left: 0;
 }
@@ -89,9 +122,13 @@ body {
     padding: 6%; /*0;*/
 }
 
+#home.border-box {
+    max-height: 350px;
+    height: 90vw;
+}
+
 .border-box {
     position: relative;
-    min-height: 350px;
     margin-bottom: 100px;
     width: 95%;
     padding: 0 2%;
@@ -103,7 +140,8 @@ body {
 
 .container {
     position: relative;
-    padding: 50px 5vw;
+    /* padding: 50px 5vw; */
+    padding: 3.9% 3.9% 0 3.9%;
 }
 
 .border-box::before {
@@ -129,18 +167,30 @@ body {
 
 #footer {
     position: relative;
-    height: 300px;
+    min-height: 300px;
     /* background: linear-gradient(rgba(65,131,217,1), rgba(0,0,0,0)); */
     border-radius: 25px 25px 0 0; 
-    padding: 10px 20px;
     width: 95%;
     bottom: -23px;    
+}
+
+#footer > div {
+    padding: 10px 20px;
+    width: 100%;
+    height: 100%;
+}
+
+#footer > img {
+    width: 48%;
+    left: -0.2px;
+    top: -0.2px;
 }
 
 .logo {
     height: 30px;
 
 }
+
 
 .center-absolute {
     transform: translate(-50%, -50%);
@@ -154,7 +204,10 @@ body {
 }
 
 #home .hero.text {
-    padding-top: 20vh;
+    position: absolute;
+    margin: 0 auto;
+    top: 33%;
+    width: 99%;
 }
 
 #home .search {
@@ -167,29 +220,43 @@ body {
     text-align: center;
 }
 
+#home img.center-absolute {
+    left: 51.8%;
+    
+}
+
 h1 {
     font-size: 4rem;
-    font-weight: 700;
-}
-
-h2 {
-    font-size: 3.3rem;
-    font-weight: 700;
-    margin-bottom: 10px;
-}
-
-h3 {
-    font-size: 1.7rem;
-    font-weight: 700;
-}
-
-h4 {
-    font-size: 1.3rem; 
     font-weight: 700;
     letter-spacing: -0.3px;
 }
 
+h2 {
+    font-size: 2.9rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    letter-spacing: -0.5px;
+}
+
+h3 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: -1px;
+}
+
+h4 {
+    font-size: 1.55rem; 
+    font-weight: 700;
+    letter-spacing: -1px;
+}
+
 h5 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+}
+
+h6 {
     font-size: 1.1rem;
     font-weight: 700;
     letter-spacing: -0.3px;
@@ -199,9 +266,22 @@ p {
     font-size: 0.9rem;
 }
 
+p.fancy {
+    font-size: 0.85rem;
+    line-height: 16px;
+    letter-spacing: -0.2px;
+}
+
 p.hero {
     max-width: 520px;
     font-size: 1.3rem;
+    letter-spacing: -0.1px;
+}
+
+p.simple {
+    font-size: 0.81rem;
+    margin: 0;
+    padding: 0;
 }
 
 .blue {
@@ -211,6 +291,14 @@ p.hero {
 .text span, .emphasis, .fancy-search {
     font-family: "Century Schoolbook", "Century Schoolbook L", Georgia, serif;
     font-style: italic;
+}
+
+.fancy {
+    font-family: "Century Schoolbook", "Century Schoolbook L", Georgia, serif;
+}
+
+.no-italics {
+    font-style: normal;
 }
 
 .extra-rounded-borders {
@@ -223,15 +311,33 @@ p.hero {
     color: white;
 }
 
+
+#footer .basic-button {
+    width: 80%;
+    min-width: fit-content;
+}
+
+.basic-button {
+    padding: 0.4rem 0.7rem;
+}
+
 .fancy-button {
     /* font-family: "Century Schoolbook", "Century Schoolbook L", Georgia, serif; */
+    padding: 12px 3vw;
+}
+
+.fancy-button , .basic-button {
     text-align: center;
     background-color: rgb(0, 0, 0, 0);
-    padding: 12px 3vw;
     width: fit-content;
     color: white;
     font-size: 1rem;
 }
+
+.fancy-button .text, .basic-button .text {
+    margin-bottom: 0;
+}
+
 
 #graph {
     z-index: 2;
@@ -368,7 +474,7 @@ input.btn {
     font-size: 13px;
 }
 
-.btn {
+#themes .btn {
     min-width: 110px !important;
     padding: 2px 8px 6px 8px !important;
     margin: 3px 4px !important;
@@ -403,13 +509,20 @@ input.btn {
     color: #226B97; /* color['highlight'] */
 }
 
+.carousel-card a.arrow {
+    position: absolute;
+    /* bottom: 0; */
+    left: 0;
+    margin: 10px 10%;
+}
+
  a.arrow:hover {
     text-decoration: solid;
     color: #226B97;
  }
 
  a.arrow {
-    font-family: Tahoma, Arial, Helvetica, sans-serif;
+    font-family: "Century Schoolbook", "Century Schoolbook L", Georgia, serif;
     margin: 0 8px;
     color: #41A3D6; /* color['highlight'] */
     font-size: 86%;
@@ -432,6 +545,11 @@ input.btn {
  .mw-50 {
     text-align: center;
  }
+
+i {
+    color: white;
+    margin: 4px;
+}
 
 /* p { 
     color: red;

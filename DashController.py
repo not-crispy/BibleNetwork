@@ -19,13 +19,13 @@ def get_network_lower():
         html.Div(className='row p-4', children=[
             html.Div(className='py-3 col-md-6 col-sm-12', style={'min-width': '250px'}, children=[
                 get_explainer(),
-                db.get_text("Cross References", size="H4", color="highlight", id="crossref-title"),
+                db.get_text("Cross References", size="h5", color="highlight", id="crossref-title"),
                 html.Div(id='crossrefs', children=[html.P(children="")], style={"max-width": "90%"}),
-                db.get_text("Selected Verse", size="H4", color="highlight"),
+                db.get_text("Selected Verse", size="h5", color="highlight"),
                 html.Div(id='betweens', className='mb-3', children=[html.P(children="")]),
             ]),
             html.Div(className='py-3 col-md-6 col-sm-12', style={'min-width': '250px'}, children=[
-                db.get_text("Related Themes", size="H4", color="highlight", classes="mw-50"),
+                db.get_text("Related Themes", size="h5", color="highlight", classes="mw-50"),
                 dcc.Tabs(id='themes', className='mx-auto', children=[html.P(children="")], style={'display': 'inline-block', 'max-width': '500px'},),
             ]),
         ])
@@ -60,7 +60,7 @@ def get_graph(display_on=True):
                 #     html.Div(children="a"),
                 # ]),
                 html.Div(style={'min-width': '300px'}, children=[
-                    html.Div(id="main-wrapper", style={'display': 'block', 'width':'100%', 'height':'100vh', 'position': 'absolute'}),
+                    html.Div(id="main-wrapper", style={'display': 'block', 'width':'100%', 'min-height': '65vh', 'position': 'absolute'}),
                     html.Div(id="graph", n_clicks=0),
                     # dc.get_popup(id="info-box", target="graph"),
                     html.Div(id='info-box-wrapper', className='absolute-centre', children=[html.Div(className='card', id='info-box')])
@@ -87,6 +87,78 @@ def get_explainer():
         html.P(" "),
      ])
 
+def get_footer_col(col="a"):
+    columns = []
+
+    if col == "a":
+        columns = ["About Bible Network",
+                    "How it works",
+                    "Get in touch",
+                    "Support"]
+    
+    elif col == "b":
+        columns = ["Exegesis",
+                    "Thematics",
+                    "Theology",]
+    elif col == "c":
+        columns = ["Privacy Policy",
+                    "Terms of Use",]
+    
+    return [db.get_text(x, size='p', classes="simple", hero=False, color='white') for x in columns]
+    
+def get_footer():
+    # General classes
+    col_1 = "col-md-7 col-sm-12 row"
+    col_2 = "col-md-5 col-sm-12 row"
+    mini_col = "col-md-4 col-sm-6"
+
+    # Build footer
+    footer = html.Div(html.Div(id='footer', className="mx-auto", style={
+        'background': f'linear-gradient({COLOURS['footer']} 40%, rgba(0,0,0,0))'
+    }, children=[
+        html.Img(src=r"/assets/network-crop.png", className="position-absolute"),
+        db.get_div(children=[
+            db.get_div(classes="row pt-3", children=[
+                db.get_div("", classes=col_1),
+                db.get_div(classes=f"{col_2} d-flex justify-content-center", children=[
+                    db.get_newsletter_button(classes="")])
+            ]),
+            db.get_row([
+                db.get_div(children=[
+                    db.get_div(children=[], classes=mini_col),
+                    db.get_div(children=[], classes=mini_col),
+                    db.get_div(children=get_footer_col(col="a"), classes=mini_col),
+                ], classes=col_1),
+                db.get_div(children=[
+                        db.get_div(children=get_footer_col(col="b"), classes=mini_col),
+                        db.get_div(children=get_footer_col(col="c"), classes=mini_col),
+                ], classes=col_2)
+            ]),
+            db.get_div(classes='extra-rounded-borders mx-auto my-4 fancy-button light-border', 
+                            children=db.get_text(size='h6', color='white', text='A #gospel-charged tool# for interactive exploration of cross-references, exegetical contexts, theology and themes.')),
+            get_socials(),
+            db.get_div(classes="my-4", children=[db.get_text(size='p', classes='simple inline px-3', color='white', text='\u00A9 Copyright 2025 BibleNetwork')])                
+        ])
+    ]))
+    return footer
+
+def get_socials():
+    socials = [('facebook', 'https://www.facebook.com/YourProfile'),
+               ('youtube', 'https://www.youtube.com/YourChannel'),
+               ('instagram', 'https://www.instagram.com/YourProfile'),
+               ('spotify', 'https://open.spotify.com/user/YourProfile'),
+               ('tiktok', 'https://www.tiktok.com/@YourProfile'),]
+    t = "_blank"
+    socials_builder = [html.A(html.I(className=f"fa fa-lg fa-{x}"), href=y, target=t,) 
+                       for x,y in socials]
+
+    return dbc.Container(dbc.Row(dbc.Col(
+        html.Div(children=socials_builder,
+                className="d‑flex justify‑content‑center align‑items‑center my‑4"
+        ) ) ), 
+        fluid=True,
+    )
+
 def get_popup(id, target="graph", content="no content", type="legacy"):
     return dbc.Popover(
             "content",
@@ -104,7 +176,23 @@ class DashController():
         self.styles = stylesheet
         self.default_stylesheet = self.styles.get_default()
 
-    def get_verse(self, id, get_name=False, get_url=False):
+    def get_verse(self, id):
+        """Returns verse data."""
+        print(f"This is it {id}")
+        data = {
+            'name': self.network.get_fullname(id),
+            'link': self.get_url(id),
+            'verse': self.network.get_verse(id)
+        }
+
+        return data
+    
+    def get_verses(self, ids=[]):
+        "Get a list of verses."
+        verses = [self.get_verse(id) for id in ids]
+        return verses
+    
+    def get_verse_as_div(self, id, get_name=False, get_url=False):
         """Returns verse as a div."""
         name = db.get_em(self.network.get_fullname(id)) if get_name else ""
         link = self.get_url_as_link(id) if get_url else ""
@@ -140,9 +228,9 @@ class DashController():
 
         return self._get_url(id1)
     
-    def get_url_as_link(self, id):
-        return db.get_link(classes="inline arrow", children="\u2192", href=self.get_url(id))
-    
+    def get_url_as_link(self, id, text="\u2192"):
+        return db.get_link(classes="inline arrow", children=text, href=self.get_url(id))
+
     def get_topheading(self, id):
         # Get previous and next ids
         prev, x, next = self.get_prev_next(id=id)
@@ -152,8 +240,8 @@ class DashController():
         forward = db.get_link(id="next", children="\u25BA", href=self.get_url(next))
         name = db.get_text(self.network.get_fullname(id), classes='title inline', size='h5', color='highlight')
         name = html.H5([back, name, forward], className='title')
-        # name = db.get_text([back, name, forward], classes='title', size='h4', color='highlight', is_list=True)
-        verses = self.get_verse(id)
+        # name = db.get_text([back, name, forward], classes='title', size='h5', color='highlight', is_list=True)
+        verses = self.get_verse_as_div(id)
 
         return db.get_div([name, verses])
     
@@ -245,7 +333,7 @@ class DashController():
         for crossref in self.network.get_crossrefs(source_id):
             # build crossreferences
             id = crossref[0]
-            children.append(self.get_verse(id, get_name=True, get_url=True))
+            children.append(self.get_verse_as_div(id, get_name=True, get_url=True))
 
             # don't get more than max cross references
             count = count + 1 if count < max else -1 
@@ -406,6 +494,10 @@ class DashController():
             return [self.generate_fig(id=id, id2=id2, height=height)]              
         
         return [self.generate_fig(id=id, height=height)]
+    
+    def get_slide(self, start_index, items, visible=4):
+        """Allows the generation of slides via DashController"""
+        return db.get_slide(start_index, items=items, visible=visible)
     
     # Troubleshoot
     # def generate_graph(self, id, cutoff, factor):
